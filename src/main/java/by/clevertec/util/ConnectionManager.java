@@ -1,6 +1,5 @@
 package by.clevertec.util;
 
-import by.clevertec.config.LoadProperties;
 import by.clevertec.exception.JDBCConnectionException;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -9,6 +8,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+
+import static by.clevertec.config.LoadProperties.PASSWORD_DB;
+import static by.clevertec.config.LoadProperties.URL_DB;
+import static by.clevertec.config.LoadProperties.USER_DB;
 
 @Slf4j
 @UtilityClass
@@ -25,13 +28,11 @@ public class ConnectionManager {
      * @throws JDBCConnectionException если не удалось установить соединение с базой данных
      */
     public Connection getJDBCConnection() {
+
         if (connection == null) {
-            String url = new LoadProperties().getURL_DB();
-            String user = new LoadProperties().getUSER_DB();
-            String password = new LoadProperties().getPASSWORD_DB();
             try {
                 Class.forName("org.postgresql.Driver").getDeclaredConstructor().newInstance();
-                connection = DriverManager.getConnection(url, user, password);
+                connection = DriverManager.getConnection(URL_DB, USER_DB, PASSWORD_DB);
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                      NoSuchMethodException |
                      ClassNotFoundException | SQLException e) {

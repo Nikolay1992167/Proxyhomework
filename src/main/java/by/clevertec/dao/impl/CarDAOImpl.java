@@ -7,6 +7,7 @@ import by.clevertec.exception.JDBCConnectionException;
 import by.clevertec.exception.ResourceSqlException;
 import by.clevertec.proxy.annotations.MyAnnotation;
 import by.clevertec.util.ConnectionManager;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

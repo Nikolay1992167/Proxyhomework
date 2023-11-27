@@ -3,6 +3,8 @@ package by.clevertec.proxy.pattern;
 import by.clevertec.cach.Cache;
 import by.clevertec.dao.CarDAO;
 import by.clevertec.entity.Car;
+import by.clevertec.proxy.factory.Action;
+import by.clevertec.proxy.factory.ActionFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

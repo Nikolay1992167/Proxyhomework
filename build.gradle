@@ -1,6 +1,5 @@
 plugins {
     id 'java'
-    id "io.freefair.lombok" version "8.4"
 }
 
 group = 'by.clevertec'
@@ -18,17 +17,18 @@ ext {
     snakeYamlVersion = '2.1'
     logbackVersion = '1.4.11'
     postgresqlVersion = '42.6.0'
-    comonsVersion = '2.9.0'
     jacksonVersion = '2.16.0'
     reflectionsVersion = '0.10.2'
 }
 
 dependencies {
 
+    compileOnly 'org.projectlombok:lombok:1.18.30'
+
+    implementation 'com.itextpdf:itextpdf:5.5.13.3'
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}"
     implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:${jacksonVersion}"
     implementation "org.yaml:snakeyaml:${snakeyamlVersion}"
-    implementation "org.apache.commons:commons-configuration2:${comonsVersion}"
     implementation "org.mapstruct:mapstruct:${mapstructVersion}"
     implementation "org.yaml:snakeyaml:${snakeYamlVersion}"
     implementation "ch.qos.logback:logback-core:${logbackVersion}"
@@ -37,11 +37,15 @@ dependencies {
     implementation "org.reflections:reflections:${reflectionsVersion}"
 
     annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
 
     testImplementation "org.mockito:mockito-junit-jupiter:${mockitoVersion}"
     testImplementation platform("org.junit:junit-bom:${junitVersion}")
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testImplementation("org.assertj:assertj-core:${assertjVersion}")
+
+    testCompileOnly 'org.projectlombok:lombok:1.18.30'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.30'
 }
 
 test {

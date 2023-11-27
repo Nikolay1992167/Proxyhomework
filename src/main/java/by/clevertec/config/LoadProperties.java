@@ -1,36 +1,21 @@
 package by.clevertec.config;
 
-import by.clevertec.exception.PropertiesException;
-import lombok.AllArgsConstructor;
+import by.clevertec.util.YamlUtil;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.apache.commons.configuration2.Configuration;
-import org.apache.commons.configuration2.YAMLConfiguration;
-import org.apache.commons.configuration2.ex.ConfigurationException;
 
-import java.io.InputStream;
+import java.util.Map;
 
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 public class LoadProperties {
 
-    private int CACHE_CAPACITY = configuration.getInt("capacity");
-    private final String CACHE_ALGORITHM = configuration.getString("algorithm");
-    private final String URL_DB = configuration.getString("url");
-    private final String USER_DB = configuration.getString("user");
-    private final String PASSWORD_DB = configuration.getString("password");
+    static Map<String, String> postgresData = new YamlUtil().getYamlMap().get("postgres");
+    public static final String URL_DB = postgresData.get("url");
+    public static final String USER_DB = postgresData.get("user");
+    public static final String PASSWORD_DB = postgresData.get("password");
 
-    private static final Configuration configuration;
-
-    static {
-        final InputStream resourceAsStream = LoadProperties.class.getResourceAsStream("/application.yaml");
-        final YAMLConfiguration yamlConfiguration = new YAMLConfiguration();
-        try {
-            yamlConfiguration.read(resourceAsStream);
-        } catch (ConfigurationException e) {
-            throw new PropertiesException();
-        }
-        configuration = yamlConfiguration;
-    }
+    static Map<String, String> cacheSettings = new YamlUtil().getYamlMap().get("cache");
+    public static final int CACHE_CAPACITY = Integer.parseInt(cacheSettings.get("capacity"));
+    public static final String CACHE_ALGORITHM = postgresData.get("algorithm");
 }

@@ -1,15 +1,14 @@
 package by.clevertec.proxy;
 
 import by.clevertec.cach.Cache;
-import by.clevertec.cach.cacheImpl.LFUCacheImpl;
-import by.clevertec.cach.cacheImpl.LRUCacheImpl;
-import by.clevertec.config.LoadProperties;
+import by.clevertec.cach.cacheImpl.factory.CacheFactory;
+import by.clevertec.cach.cacheImpl.factory.CacheFactoryImpl;
 import by.clevertec.dao.CarDAO;
 import by.clevertec.entity.Car;
 import by.clevertec.exception.ProxyInvocationFailedException;
 import by.clevertec.proxy.annotations.MyAnnotation;
-import by.clevertec.proxy.pattern.Action;
-import by.clevertec.proxy.pattern.ActionFactory;
+import by.clevertec.proxy.factory.Action;
+import by.clevertec.proxy.factory.ActionFactory;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
@@ -26,15 +25,8 @@ public class MyInvocationHandler implements InvocationHandler {
     public MyInvocationHandler(CarDAO target) {
         this.target = target;
         this.targetClass = target.getClass();
-        this.cache = getTypeAlgorithmCache();
-    }
-
-    private Cache<UUID, Car> getTypeAlgorithmCache() {
-        return switch (new LoadProperties().getCACHE_ALGORITHM()) {
-            case "LFUCacheImpl" -> new LFUCacheImpl<>();
-            case "LRUCacheImpl" -> new LRUCacheImpl<>();
-            default -> throw new IllegalArgumentException("Неверно указан алгоритм кэширования.");
-        };
+        CacheFactory<UUID, Car> cacheFactory = new CacheFactoryImpl<>();
+        this.cache = cacheFactory.createCacheType();
     }
 
     @Override

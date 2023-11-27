@@ -1,115 +1,112 @@
 package by.clevertec.cach.cacheImpl;
 
 import by.clevertec.cach.Cache;
-import by.clevertec.config.LoadProperties;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.HashMap;
-import java.util.PriorityQueue;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
 
 @Data
-@AllArgsConstructor
 public class LFUCacheImpl<K, V> implements Cache<K, V> {
 
-    private int capacity;
-    private HashMap<K, V> valueMap;
-    private HashMap<K, Integer> frequencyMap;
-    private PriorityQueue<K> queue;
+    private final int capacity;
+    private final Map<K, V> valueMap;
+    private final Map<K, Integer> frequencyMap;
+    private final Map<Integer, Set<K>> frequencySets;
     private int minFrequency;
-    private HashMap<K, Long> timeMap;
 
-    public LFUCacheImpl() {
-        this.capacity = new LoadProperties().getCACHE_CAPACITY();
+    /**
+     * Constructs a new LFUCache with the specified capacity.
+     *
+     * @param capacity the maximum number of entries that this cache can hold
+     */
+    public LFUCacheImpl(int capacity) {
+        this.capacity = capacity;
         this.valueMap = new HashMap<>();
         this.frequencyMap = new HashMap<>();
-        this.queue = new PriorityQueue<>((k1, k2) -> {
-            int frequencyCompare = frequencyMap.get(k1) - frequencyMap.get(k2);
-            if (frequencyCompare == 0) {
-                return timeMap.get(k1).compareTo(timeMap.get(k2));
-            }
-            return frequencyCompare;
-        });
+        this.frequencySets = new HashMap<>();
         this.minFrequency = 0;
-        this.timeMap = new HashMap<>();
     }
 
     /**
-     * Ищет значение по ключу
+     * Returns the value associated with the specified key in this cache,
+     * or null if the cache contains no mapping for the key.
      *
-     * @param key
-     * @return найденное значение
+     * @param key the key whose associated value is to be returned
+     * @return the value to which the specified key is mapped, or null if this cache contains no mapping for the key
      */
     @Override
     public V get(K key) {
-        if (valueMap.containsKey(key)) {
-            updateFrequencyAndQueue(key);
-            return valueMap.get(key);
+
+        if (!valueMap.containsKey(key)) {
+            return null;
         }
+        int frequency = frequencyMap.get(key);
+        frequencyMap.put(key, frequency + 1);
+        frequencySets.get(frequency).remove(key);
+        if (frequency == minFrequency && frequencySets.get(frequency).isEmpty()) {
+            minFrequency++;
+        }
+        frequencySets.computeIfAbsent(frequency + 1, k -> new LinkedHashSet<>()).add(key);
+        return valueMap.get(key);
+    }
+
+    /**
+     * Creates the specified value with the specified key in this cache.
+     * If the cache previously contained a mapping for the key, the old value is replaced.
+     * If the cache is full, the least frequently used entry will be removed.
+     *
+     * @param key   key with which the specified value is to be associated
+     * @param value value to be associated with the specified key
+     * @return the previous value associated with the specified key, or null if there was no mapping for the key
+     */
+    @Override
+    public V put(K key, V value) {
+
+        if (capacity <= 0) {
+            return null;
+        }
+        if (valueMap.containsKey(key)) {
+            V oldValue = valueMap.get(key);
+            valueMap.put(key, value);
+            get(key);
+            return oldValue;
+        }
+        if (valueMap.size() >= capacity) {
+            K removingKey = frequencySets.get(minFrequency).iterator().next();
+            frequencySets.get(minFrequency).remove(removingKey);
+            valueMap.remove(removingKey);
+            frequencyMap.remove(removingKey);
+        }
+        valueMap.put(key, value);
+        frequencyMap.put(key, 1);
+        frequencySets.computeIfAbsent(1, k -> new LinkedHashSet<>()).add(key);
+        minFrequency = 1;
         return null;
     }
 
     /**
-     * Создаёт или обновляет значение по ключу
+     * Removes the entry for the specified key from this cache if present.
+     * Returns the value to which this cache previously associated the key,
+     * or null if the cache contained no mapping for the key.
      *
-     * @param key
-     * @param value
+     * @param key the key whose mapping is to be removed from the cache
+     * @return the previous value associated with key, or null if there was no mapping for key.
      */
     @Override
-    public void put(K key, V value) {
-        if (valueMap.containsKey(key)) {
-            valueMap.put(key, value);
-            updateFrequencyAndQueue(key);
-        } else {
-            if (valueMap.size() == capacity) {
-                removeLeastFrequentlyUsed();
-            }
-            valueMap.put(key, value);
-            frequencyMap.put(key, 1);
-            queue.offer(key);
-            minFrequency = 1;
-            timeMap.put(key, System.currentTimeMillis());
-        }
-    }
+    public V delete(K key) {
 
-    /**
-     * Удаляет значение по ключу
-     *
-     * @param key
-     */
-    @Override
-    public void delete(K key) {
-        if (valueMap.containsKey(key)) {
-            valueMap.remove(key);
-            frequencyMap.remove(key);
-            queue.remove(key);
-            timeMap.remove(key);
+        if (!valueMap.containsKey(key)) {
+            return null;
         }
-    }
-
-    /**
-     * Обновляет частоту и очередь положения объекта в cache
-     *
-     * @param key
-     */
-    private void updateFrequencyAndQueue(K key) {
-        int frequency = frequencyMap.get(key) + 1;
-        frequencyMap.put(key, frequency);
-        queue.remove(key);
-        queue.offer(key);
-        if (frequency - 1 == minFrequency && !frequencyMap.containsValue(minFrequency)) {
-            minFrequency = frequency;
-        }
-        timeMap.put(key, System.currentTimeMillis());
-    }
-
-    /**
-     * Удаляет наименее часто используемый объект
-     */
-    private void removeLeastFrequentlyUsed() {
-        K key = queue.poll();
-        valueMap.remove(key);
+        int frequency = frequencyMap.get(key);
         frequencyMap.remove(key);
-        timeMap.remove(key);
+        frequencySets.get(frequency).remove(key);
+        if (frequency == minFrequency && frequencySets.get(frequency).isEmpty()) {
+            minFrequency++;
+        }
+        return valueMap.remove(key);
     }
 }
