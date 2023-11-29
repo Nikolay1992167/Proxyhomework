@@ -13,28 +13,28 @@ import org.mapstruct.ReportingPolicy;
 public interface CarMapper {
 
     /**
-     * Маппит DTO в car без UUID
+     * Mappit DTO in a car without ID
      *
-     * @param carDto - DTO для маппинга
-     * @return новый car
+     * @param carDto - DTO for mapper
+     * @return a new car
      */
     Car toCar(CarDto carDto);
 
     /**
-     * Маппит текущий продукт в DTO без даты
+     * Mappit current car in DTO without date
      *
-     * @param car - существующий car
-     * @return DTO с идентификатором
+     * @param car - existing car
+     * @return DTO with ID
      */
     InfoCarDto toInfoCarDto(Car car);
 
     /**
-     * Сливает существующий car с информацией из DTO
-     * не меняет дату создания и идентификатор
+     * Merges an existing car with information from the DTO
+     * does not change the creation date and ID
      *
-     * @param car    существующий car
-     * @param carDto информация для обновления
-     * @return обновлённый car
+     * @param car    existing car
+     * @param carDto information for update
+     * @return updated car
      */
     Car merge(@MappingTarget Car car, CarDto carDto);
 }

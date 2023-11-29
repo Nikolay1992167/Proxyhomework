@@ -19,23 +19,23 @@ public class CarServiceImpl implements CarService {
     private final CarDAO carDAO;
 
     /**
-     * Ищет car по идентификатору
+     * Find a car by ID
      *
-     * @param id идентификатор car
-     * @return найденный car
-     * @throws NotFoundException если не найден
+     * @param id car ID
+     * @return found car
+     * @throws NotFoundException if not find
      */
     @Override
     public InfoCarDto findById(UUID id) {
         Car car = carDAO.getById(id)
-                .orElseThrow(() -> new NotFoundException("Автомобиль с " + id + " не найден!"));
+                .orElseThrow(() -> new NotFoundException("Car with " + id + " not found!"));
         return carMapper.toInfoCarDto(car);
     }
 
     /**
-     * Возвращает все существующие cars
+     * Returns all existing cars
      *
-     * @return лист с информацией о car
+     * @return list of information by car
      */
     @Override
     public List<InfoCarDto> findAll() {
@@ -46,9 +46,9 @@ public class CarServiceImpl implements CarService {
     }
 
     /**
-     * Создаёт новый car из DTO
+     * Create new car from DTO
      *
-     * @param carDto DTO с информацией о создании
+     * @param carDto DTO with information about creat
      */
     @Override
     public UUID create(CarDto carDto) {
@@ -58,10 +58,10 @@ public class CarServiceImpl implements CarService {
     }
 
     /**
-     * Обновляет уже существующий car из информации полученной в DTO
+     * Update also existing car from the information received in DTO
      *
-     * @param id     идентификатор car для обновления
-     * @param carDto DTO с информацией об обновлении
+     * @param id     ID of car for update
+     * @param carDto DTO with information for update
      */
     @Override
     public void update(UUID id, CarDto carDto) {
@@ -71,15 +71,15 @@ public class CarServiceImpl implements CarService {
                     carDAO.update(updatedCar);
                 },
                 () -> {
-                    throw new NotFoundException("Автомобиль с %s не найден");
+                    throw new NotFoundException("Car with %s not found!");
                 }
         );
     }
 
     /**
-     * Удаляет существующий car
+     * Delete existing car
      *
-     * @param id идентификатор car для удаления
+     * @param id ID car for delete
      */
     @Override
     public void delete(UUID id) {

@@ -1,8 +1,8 @@
 package by.clevertec.cach.cacheImpl;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -10,15 +10,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith(MockitoExtension.class)
 class LRUCacheImplTest {
 
-    @InjectMocks
     private LRUCacheImpl<Integer, String> cache;
 
+    @BeforeEach
+    void setUp() {
+        cache = new LRUCacheImpl<>(3);
+        cache.put(1, "first");
+        cache.put(2, "second");
+        cache.put(3, "third");
+    }
+
     @Test
-    void shouldValuePutAndGet() {
+    void shouldReturnExpectedValueByKey() {
         // given
-        int key = 1;
-        String expected = "Actual value";
-        cache.put(key, expected);
+        String expected = "first";
 
         // when
         String actual = cache.get(1);
@@ -27,51 +32,82 @@ class LRUCacheImplTest {
         assertThat(actual).isEqualTo(expected);
     }
 
+    //
     @Test
-    void shouldUpdateValue() {
-        // given
-        int key = 1;
-        String basic = "Line";
-        String actual = "Update line";
+    void shouldReturnNullWhenCacheNotContainValueByKey() {
+        // given, when
+        String actual = cache.get(4);
 
-        cache.put(key, basic);
-        cache.put(key, actual);
+        // then
+        assertThat(actual).isNull();
+    }
+
+    @Test
+    void shouldRemovedExpectedValueFromMap() {
+        // given
+        String expected = "fourth";
+        cache.put(4, expected);
+
+        // when, then
+        assertThat(cache.get(1)).isNull();
+        assertThat(cache.get(4)).isEqualTo(expected);
+    }
+
+    @Test
+    void shouldRemoveValueInCacheThatFirstInTheQueue() {
+        // given
+        cache.get(1);
+        cache.get(2);
+        cache.put(4, "fourth");
+
+        // when, then
+        assertThat(cache.get(3)).isNull();
+        cache.put(5, "fifth");
+        assertThat(cache.get(1)).isNull();
+    }
+
+    @Test
+    void shouldReturnDeletedValueWhenCacheContainsExpectedKey() {
+        // given
+        String expected = "first";
 
         // when
-        String expected = cache.get(key);
+        String actual = cache.put(1, "fifth");
 
         // then
         assertThat(actual).isEqualTo(expected);
     }
 
     @Test
-    void testDelete() {
+    void shouldReturnNullWhenCapacityIsLessOrEqualZero() {
         // given
-        int key = 1;
-        String actual = "Actual value";
-        cache.put(key, actual);
+        cache = new LRUCacheImpl<>(0);
 
         // when
-        cache.delete(key);
-        String expected = cache.get(key);
+        String actual = cache.put(1, "first");
 
         // then
-        assertThat(expected).isNull();
+        assertThat(actual).isNull();
     }
 
     @Test
-    void shouldDeleteFirstInLine() {
+    void shouldReturnRemovedValueWhenRemoveByKey() {
         // given
-        int key = 0;
-        String value = "Value:";
-        for (int i = 0; i < 10; i++) {
-            cache.put(key + i, value + i);
-        }
+        String expected = "first";
 
         // when
-        cache.put(10, "Value:10");
+        String actual = cache.delete(1);
 
         // then
-        assertThat(cache.get(0)).isNull();
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    void checkMethodShouldReturnNullWhenRemoveByKeyNotContain() {
+        // given, when
+        String actual = cache.delete(4);
+
+        // then
+        assertThat(actual).isNull();
     }
 }

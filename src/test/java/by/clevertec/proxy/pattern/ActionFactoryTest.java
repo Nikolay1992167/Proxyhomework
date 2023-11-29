@@ -46,7 +46,7 @@ class ActionFactoryTest {
         assertThat(actualDelete).isNotNull();
         assertThatThrownBy(() -> actionFactory.getAction("nonExistent"))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Неподдерживаемый метод: nonExistent");
+                .hasMessageContaining("Unsupported method: nonExistent");
     }
 
     @Test
@@ -111,7 +111,6 @@ class ActionFactoryTest {
         // when, then
         assertThat(actual).isEqualTo(expected);
         verify(carDAO).save(expected);
-        verify(cache).put(expected.getId(), expected);
     }
 
     @Test
@@ -132,17 +131,19 @@ class ActionFactoryTest {
     }
 
     @Test
-    void testDelete() {
+    void shouldDeleteCarWhenContainInCache() {
         // given
         Car car = CarTestData.builder()
                 .build()
                 .buildCar();
+        when(cache.get(car.getId())).thenReturn(car);
 
         // when
-        actionFactory.delete(new Object[]{car.getId()});
+        Car deletedCar = actionFactory.delete(new Object[]{car.getId()});
 
         // then
+        assertThat(deletedCar).isNull();
         verify(carDAO).delete(car.getId());
-        verify(cache).delete(car.getId());
+        verify(cache).get(car.getId());
     }
 }

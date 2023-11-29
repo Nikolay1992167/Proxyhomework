@@ -31,10 +31,10 @@ public class CarDAOImpl implements CarDAO {
     }
 
     /**
-     * Ищет в памяти car по идентификатору
+     * Find in memory car by id
      *
-     * @param id идентификатор car
-     * @return Optional<Product> если найден, иначе Optional.empty()
+     * @param id car id
+     * @return Optional<Product>  if found, otherwise  Optional.empty()
      */
     @Override
     @MyAnnotation
@@ -58,9 +58,9 @@ public class CarDAOImpl implements CarDAO {
     }
 
     /**
-     * Ищет все cars в памяти
+     * Find all cars in memory
      *
-     * @return список найденных cars
+     * @return list of found cars
      */
     @Override
     public List<Car> findAll() {
@@ -81,17 +81,17 @@ public class CarDAOImpl implements CarDAO {
     }
 
     /**
-     * Сохраняет car в памяти
+     * Save car in memory
      *
-     * @param car сохраняемый car
-     * @return сохранённый car
-     * @throws IllegalArgumentException если переданный car null
+     * @param car saved car
+     * @return saved car in memory
+     * @throws IllegalArgumentException if supplied car null
      */
     @Override
     @MyAnnotation
     public Car save(Car car) {
         if (car == null) {
-            throw new IllegalArgumentException("Car не может быть null");
+            throw new IllegalArgumentException("Car cannot be null");
         }
         String sql = "INSERT INTO cars (name, description, price) VALUES (?,?,?)";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -109,17 +109,17 @@ public class CarDAOImpl implements CarDAO {
     }
 
     /**
-     * Обновляет car в памяти
+     * Update car in memory
      *
-     * @param car обновляемый car
-     * @return обновлённый car
-     * @throws IllegalArgumentException если переданный car null
+     * @param car update car
+     * @return update car in memory
+     * @throws IllegalArgumentException if otherwise car null
      */
     @Override
     @MyAnnotation
     public Car update(Car car) {
         if (car == null) {
-            throw new IllegalArgumentException("Car не может быть null");
+            throw new IllegalArgumentException("Car cannot be null");
         }
         String sql = "UPDATE cars SET name = ?, description = ?, price = ? WHERE id = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -139,9 +139,9 @@ public class CarDAOImpl implements CarDAO {
     }
 
     /**
-     * Удаляет car из памяти по идентификатору
+     * Delete car for memory by id
      *
-     * @param id идентификатор car
+     * @param id car id
      */
     @Override
     @MyAnnotation

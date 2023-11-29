@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id "io.freefair.lombok" version "8.4"
 }
 
 group = 'by.clevertec'
@@ -23,8 +24,9 @@ ext {
 
 dependencies {
 
-    compileOnly 'org.projectlombok:lombok:1.18.30'
 
+
+    implementation 'javax.validation:validation-api:2.0.1.Final'
     implementation 'com.itextpdf:itextpdf:5.5.13.3'
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}"
     implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:${jacksonVersion}"
@@ -37,15 +39,12 @@ dependencies {
     implementation "org.reflections:reflections:${reflectionsVersion}"
 
     annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
-    annotationProcessor 'org.projectlombok:lombok:1.18.30'
 
     testImplementation "org.mockito:mockito-junit-jupiter:${mockitoVersion}"
     testImplementation platform("org.junit:junit-bom:${junitVersion}")
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testImplementation("org.assertj:assertj-core:${assertjVersion}")
 
-    testCompileOnly 'org.projectlombok:lombok:1.18.30'
-    testAnnotationProcessor 'org.projectlombok:lombok:1.18.30'
 }
 
 test {

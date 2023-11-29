@@ -1,8 +1,8 @@
 package by.clevertec.proxy;
 
 import by.clevertec.cach.Cache;
-import by.clevertec.cach.cacheImpl.factory.CacheFactory;
-import by.clevertec.cach.cacheImpl.factory.CacheFactoryImpl;
+import by.clevertec.cach.factory.CacheFactory;
+import by.clevertec.cach.factory.CacheFactoryImpl;
 import by.clevertec.dao.CarDAO;
 import by.clevertec.entity.Car;
 import by.clevertec.exception.ProxyInvocationFailedException;

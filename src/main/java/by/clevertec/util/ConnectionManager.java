@@ -20,12 +20,12 @@ public class ConnectionManager {
     public Connection connection;
 
     /**
-     * Метод для получения соединения с базой данных PostgresSQL.
-     * Метод читает параметры из файла yaml и создает новое соединение.
-     * В случае возникновения исключений, метод записывает сообщение об ошибке в логгер и выбрасывает JDBCConnectionException.
+     * Method for getting a connection to the PostgresSQL database.
+     * The method reads parameters from the yaml file and creates a new connection.
+     * In case of exceptions, the method writes an error message to the logger and throws a JDBCConnectionException.
      *
-     * @return соединение с базой данных PostgresSQL
-     * @throws JDBCConnectionException если не удалось установить соединение с базой данных
+     * @return connection to PostgresSQL database
+     * @throws JDBCConnectionException if the database connection could not be established
      */
     public Connection getJDBCConnection() {
 

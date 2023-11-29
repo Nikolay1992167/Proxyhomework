@@ -12,7 +12,7 @@ public class YamlUtil {
     private final Map<String, Map<String, String>> yamlMap;
 
     /**
-     * Конструктор для загрузки файла application.yaml из ресурсов и преобразования его в карту с помощью Yaml.
+     * Constructor for uploading a file application.xml from resources and converting it to a map using Yaml.
      */
     public YamlUtil() {
         Yaml yaml = new Yaml();

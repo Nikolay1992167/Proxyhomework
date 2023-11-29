@@ -49,7 +49,7 @@ class CarServiceImplTest {
         void shouldThrowCarNotFoundExceptionWithExpectedMessage() {
             // given
             UUID id = UUID.fromString("33e4b6c3-c84d-47b7-ac0b-a9f8566d7950");
-            String expectedMessage = "Автомобиль с 33e4b6c3-c84d-47b7-ac0b-a9f8566d7950 не найден!";
+            String expectedMessage = "Car with 33e4b6c3-c84d-47b7-ac0b-a9f8566d7950 not found!";
 
             // when
             Exception exception = assertThrows(NotFoundException.class, () -> carService.findById(id));
@@ -213,7 +213,7 @@ class CarServiceImplTest {
             // when, then
             assertThatThrownBy(() -> carService.update(id, carDto))
                     .isInstanceOf(NotFoundException.class)
-                    .hasMessageContaining("Автомобиль с %s не найден");
+                    .hasMessageContaining("Car with %s not found!");
         }
     }
 

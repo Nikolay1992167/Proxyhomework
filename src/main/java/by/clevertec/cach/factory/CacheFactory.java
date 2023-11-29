@@ -1,4 +1,4 @@
-package by.clevertec.cach.cacheImpl.factory;
+package by.clevertec.cach.factory;
 
 import by.clevertec.cach.Cache;
 

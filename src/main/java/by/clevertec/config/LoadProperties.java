@@ -1,13 +1,9 @@
 package by.clevertec.config;
 
 import by.clevertec.util.YamlUtil;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.util.Map;
 
-@Getter
-@NoArgsConstructor
 public class LoadProperties {
 
     static Map<String, String> postgresData = new YamlUtil().getYamlMap().get("postgres");

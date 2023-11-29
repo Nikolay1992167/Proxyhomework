@@ -17,9 +17,9 @@ import java.sql.Statement;
 public class DBRunner {
 
     /**
-     * Метод для выполнения скрипта SQL создания таблицы и вставки данных.
-     * Метод читает параметры из файла .sql.
-     * В случае возникновения исключений, метод записывает сообщение об ошибке в логгер и выбрасывает InitializationSQLException.
+     * A method for executing an SQL script to create a table and insert data.
+     * The method reads parameters from a .sql file.
+     * In case of exceptions, the method writes an error message to the logger and throws InitializationSQLException.
      */
     public static void runSqlScripts() {
         try {
@@ -27,7 +27,7 @@ public class DBRunner {
             Statement statement = connection.createStatement();
             statement.execute(readScript());
         } catch (SQLException e) {
-            log.error("Ошибка при выполнении SQL скрипта", e);
+            throw new InitializationSQLException("Error when executing SQL script");
         }
     }
 
@@ -36,7 +36,7 @@ public class DBRunner {
         try {
             return Files.readString(scriptPath, StandardCharsets.UTF_8);
         } catch (IOException ex) {
-            log.error("Ошибка при чтении файла скрипта", ex);
+            log.error("Error when executing SQL script", ex);
             throw new InitializationSQLException(ex.getMessage());
         }
     }

@@ -49,7 +49,7 @@ class CarDAOImplTest {
             // when
             Exception exception = assertThrows(JDBCConnectionException.class, () -> carDAO.getById(id));
             String actualMessage = exception.getMessage();
-            expectedMessage = "Ошибка при подключении к базе данных:" + expectedMessage;
+            expectedMessage = "Error connecting to the database:" + expectedMessage;
 
             // then
             assertThat(actualMessage).isEqualTo(expectedMessage);
@@ -104,7 +104,7 @@ class CarDAOImplTest {
             // when
             Exception exception = assertThrows(JDBCConnectionException.class, () -> carDAO.findAll());
             String actualMessage = exception.getMessage();
-            expectedMessage = "Ошибка при подключении к базе данных:" + expectedMessage;
+            expectedMessage = "Error connecting to the database:" + expectedMessage;
 
             // then
             assertThat(actualMessage).isEqualTo(expectedMessage);
@@ -211,7 +211,7 @@ class CarDAOImplTest {
             // when
             Exception exception = assertThrows(JDBCConnectionException.class, () -> carDAO.save(car));
             String actualMessage = exception.getMessage();
-            expectedMessage = "Ошибка при подключении к базе данных:" + expectedMessage;
+            expectedMessage = "Error connecting to the database:" + expectedMessage;
 
             // then
             assertThat(actualMessage).isEqualTo(expectedMessage);
@@ -273,7 +273,7 @@ class CarDAOImplTest {
             // when
             Exception exception = assertThrows(JDBCConnectionException.class, () -> carDAO.update(car));
             String actualMessage = exception.getMessage();
-            expectedMessage = "Ошибка при подключении к базе данных:" + expectedMessage;
+            expectedMessage = "Error connecting to the database:" + expectedMessage;
 
             // then
             assertThat(actualMessage).isEqualTo(expectedMessage);
@@ -338,7 +338,7 @@ class CarDAOImplTest {
             // when
             Exception exception = assertThrows(JDBCConnectionException.class, () -> carDAO.delete(id));
             String actualMessage = exception.getMessage();
-            expectedMessage = "Ошибка при подключении к базе данных:" + expectedMessage;
+            expectedMessage = "Error connecting to the database:" + expectedMessage;
 
             // then
             assertThat(actualMessage).isEqualTo(expectedMessage);

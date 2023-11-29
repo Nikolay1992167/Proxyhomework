@@ -9,11 +9,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
 
-import static by.clevertec.constants.Constants.PATH_TO_FILE_XML;
-
 public class ReportCreatorXML {
 
     public static void writeCarToXml(Car car) {
+
+        final String PATH_TO_FILE_XML = "src/main/java/by/clevertec/reportXML/report";
+
         try {
             XmlMapper xmlMapper = new XmlMapper();
             xmlMapper.registerModule(new JavaTimeModule());

@@ -12,11 +12,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import static by.clevertec.constants.Constants.VALUE_ADD_IN_CACHE;
-import static by.clevertec.constants.Constants.VALUE_DELETE_IN_CACHE;
-import static by.clevertec.constants.Constants.VALUE_GET_FROM_BD;
-import static by.clevertec.constants.Constants.VALUE_GET_FROM_CACHE;
-import static by.clevertec.constants.Constants.VALUE_UPDATE_IN_CACHE;
 import static by.clevertec.reportXML.ReportCreatorXML.writeCarToXml;
 
 @Slf4j
@@ -25,7 +20,6 @@ public class ActionFactory {
     private final Map<String, Action> actionMap = new HashMap<>();
     private final CarDAO target;
     private final Cache<UUID, Car> cache;
-
     private final ServicePdf servicePdf = new ServicePdfImpl();
 
     public ActionFactory(CarDAO target, Cache<UUID, Car> cache) {
@@ -40,7 +34,7 @@ public class ActionFactory {
     public Action getAction(String actionName) {
         Action action = actionMap.get(actionName);
         if (action == null) {
-            throw new IllegalArgumentException("Неподдерживаемый метод: " + actionName);
+            throw new IllegalArgumentException("Unsupported method: " + actionName);
         }
         return action;
     }
@@ -52,16 +46,16 @@ public class ActionFactory {
         UUID id = (UUID) args[0];
         Car car = cache.get(id);
         if (car != null) {
-            log.info(VALUE_GET_FROM_CACHE + ": {}", car);
-            servicePdf.createReportPdf(getAlgorithmCache(), methodName, car, VALUE_GET_FROM_CACHE);
+            log.info(DescriptionAction.VALUE_GET_FROM_CACHE + ": {}", car);
+            servicePdf.createReportPdf(getAlgorithmCache(), methodName, car, String.valueOf(DescriptionAction.VALUE_GET_FROM_CACHE));
             return Optional.of(car);
         } else {
             Optional<Car> result = target.getById(id);
             result.ifPresent(value -> {
                 cache.put(id, value);
-                servicePdf.createReportPdf(getAlgorithmCache(), methodName, value, VALUE_GET_FROM_BD);
+                servicePdf.createReportPdf(getAlgorithmCache(), methodName, value, DescriptionAction.VALUE_GET_FROM_BD + " и " + DescriptionAction.VALUE_ADD_IN_CACHE);
                 writeCarToXml(value);
-                log.info(VALUE_ADD_IN_CACHE + ": {}", value);
+                log.info(DescriptionAction.VALUE_ADD_IN_CACHE + ": {}", value);
             });
             return result;
         }
@@ -73,10 +67,10 @@ public class ActionFactory {
 
         Car carToSave = (Car) args[0];
         Car savedCar = target.save(carToSave);
-        cache.put(savedCar.getId(), savedCar);
-        servicePdf.createReportPdf(getAlgorithmCache(), methodName, savedCar, VALUE_ADD_IN_CACHE);
+
+        servicePdf.createReportPdf(getAlgorithmCache(), methodName, savedCar, String.valueOf(DescriptionAction.VALUE_ADD_IN_BD));
         writeCarToXml(savedCar);
-        log.info(VALUE_ADD_IN_CACHE + ": {}", savedCar);
+        log.info(DescriptionAction.VALUE_ADD_IN_CACHE + ": {}", savedCar);
         return savedCar;
     }
 
@@ -87,8 +81,8 @@ public class ActionFactory {
         Car carToUpdate = (Car) args[0];
         Car updatedCar = target.update(carToUpdate);
         cache.put(updatedCar.getId(), updatedCar);
-        servicePdf.createReportPdf(getAlgorithmCache(), methodName, updatedCar, VALUE_UPDATE_IN_CACHE);
-        log.info(VALUE_UPDATE_IN_CACHE + ": {}", updatedCar);
+        servicePdf.createReportPdf(getAlgorithmCache(), methodName, updatedCar, String.valueOf(DescriptionAction.VALUE_UPDATE_IN_CACHE));
+        log.info(DescriptionAction.VALUE_UPDATE_IN_CACHE + ": {}", updatedCar);
         return updatedCar;
     }
 
@@ -100,8 +94,8 @@ public class ActionFactory {
         Car deletedCar = cache.get(id);
         if (deletedCar != null) {
             cache.delete(id);
-            log.info(VALUE_DELETE_IN_CACHE + ": {}", id);
-            servicePdf.createReportPdf(getAlgorithmCache(), methodName, deletedCar, VALUE_DELETE_IN_CACHE);
+            log.info(DescriptionAction.VALUE_DELETE_IN_CACHE + ": {}", id);
+            servicePdf.createReportPdf(getAlgorithmCache(), methodName, deletedCar, String.valueOf(DescriptionAction.VALUE_DELETE_IN_CACHE));
         }
         target.delete(id);
         return null;
