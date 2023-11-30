@@ -8,6 +8,6 @@ CREATE TABLE cars
 );
 
 INSERT INTO cars (name, description, price, created)
-VALUES ('Audi', 'Good car!', 50000.0, '2023-11-14 14:00:00+03'),
-('BMW', 'Fast car!', 80000.0, '2023-11-13 12:00:00+03');
+VALUES ('Audi', 'Хорошая машина!', 50000.0, '2023-11-14 14:00:00+03'),
+('BMW', 'Быстрая машина!', 80000.0, '2023-11-13 12:00:00+03');
 

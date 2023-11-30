@@ -20,14 +20,14 @@ ext {
     postgresqlVersion = '42.6.0'
     jacksonVersion = '2.16.0'
     reflectionsVersion = '0.10.2'
+    validationVersion = '2.0.1.Final'
+    itextpdfVersion = '5.5.13.3'
 }
 
 dependencies {
 
-
-
-    implementation 'javax.validation:validation-api:2.0.1.Final'
-    implementation 'com.itextpdf:itextpdf:5.5.13.3'
+    implementation "javax.validation:validation-api:${validationVersion}"
+    implementation "com.itextpdf:itextpdf:${itextpdfVersion}"
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}"
     implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:${jacksonVersion}"
     implementation "org.yaml:snakeyaml:${snakeyamlVersion}"
@@ -44,7 +44,6 @@ dependencies {
     testImplementation platform("org.junit:junit-bom:${junitVersion}")
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testImplementation("org.assertj:assertj-core:${assertjVersion}")
-
 }
 
 test {

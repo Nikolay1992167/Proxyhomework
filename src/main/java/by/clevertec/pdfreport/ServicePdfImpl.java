@@ -36,7 +36,7 @@ public class ServicePdfImpl implements ServicePdf {
     public Path createReportPdf(String cache, String action, Car car, String cacheAction) {
 
         final String titleReport = "Отчёт о выполненной операции";
-        final String backgroundInformation = "Дата: %s Время: %s\nАлгоритм кэширования: %s\nВыполняемый метод: %s\nОписание поставщика объекта: %s\n%s"
+        final String backgroundInformation = "Дата: %s Время: %s\nАлгоритм кэширования: %s\nВыполняемый метод: %s\nОписание действий над объектом: %s\n%s"
                 .formatted(
                         LocalDate.now(),
                         LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")),
@@ -102,8 +102,7 @@ public class ServicePdfImpl implements ServicePdf {
     private Font setsFont(int size) {
 
         final String FONT = "src/main/resources/lato-light.ttf";
-        final String ENCODING = "cp1251";
-        return FontFactory.getFont(FONT, ENCODING, BaseFont.EMBEDDED, size);
+        return FontFactory.getFont(FONT, "cp1251", BaseFont.EMBEDDED, size);
     }
 
     private void addBackgroundForFile(PdfWriter writer) throws IOException {
