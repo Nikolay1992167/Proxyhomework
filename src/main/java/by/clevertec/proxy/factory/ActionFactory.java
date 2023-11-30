@@ -46,16 +46,24 @@ public class ActionFactory {
         UUID id = (UUID) args[0];
         Car car = cache.get(id);
         if (car != null) {
-            log.info(DescriptionAction.VALUE_GET_FROM_CACHE + ": {}", car);
-            servicePdf.createReportPdf(getAlgorithmCache(), methodName, car, String.valueOf(DescriptionAction.VALUE_GET_FROM_CACHE));
+            log.info(DescriptionAction.VALUE_GET_FROM_CACHE.getValue() + ": {}", car);
+            servicePdf.createReportPdf(
+                    getAlgorithmCache(),
+                    methodName,
+                    car,
+                    DescriptionAction.VALUE_GET_FROM_CACHE.getValue());
             return Optional.of(car);
         } else {
             Optional<Car> result = target.getById(id);
             result.ifPresent(value -> {
                 cache.put(id, value);
-                servicePdf.createReportPdf(getAlgorithmCache(), methodName, value, DescriptionAction.VALUE_GET_FROM_BD + " и " + DescriptionAction.VALUE_ADD_IN_CACHE);
+                servicePdf.createReportPdf(
+                        getAlgorithmCache(),
+                        methodName,
+                        value,
+                        DescriptionAction.VALUE_GET_FROM_BD.getValue() + " и " + DescriptionAction.VALUE_ADD_IN_CACHE.getValue());
                 writeCarToXml(value);
-                log.info(DescriptionAction.VALUE_ADD_IN_CACHE + ": {}", value);
+                log.info(DescriptionAction.VALUE_ADD_IN_CACHE.getValue() + ": {}", value);
             });
             return result;
         }
@@ -68,9 +76,13 @@ public class ActionFactory {
         Car carToSave = (Car) args[0];
         Car savedCar = target.save(carToSave);
 
-        servicePdf.createReportPdf(getAlgorithmCache(), methodName, savedCar, String.valueOf(DescriptionAction.VALUE_ADD_IN_BD));
+        servicePdf.createReportPdf(
+                getAlgorithmCache(),
+                methodName,
+                savedCar,
+                DescriptionAction.VALUE_ADD_IN_BD.getValue());
         writeCarToXml(savedCar);
-        log.info(DescriptionAction.VALUE_ADD_IN_CACHE + ": {}", savedCar);
+        log.info(DescriptionAction.VALUE_ADD_IN_CACHE.getValue() + ": {}", savedCar);
         return savedCar;
     }
 
@@ -81,8 +93,12 @@ public class ActionFactory {
         Car carToUpdate = (Car) args[0];
         Car updatedCar = target.update(carToUpdate);
         cache.put(updatedCar.getId(), updatedCar);
-        servicePdf.createReportPdf(getAlgorithmCache(), methodName, updatedCar, String.valueOf(DescriptionAction.VALUE_UPDATE_IN_CACHE));
-        log.info(DescriptionAction.VALUE_UPDATE_IN_CACHE + ": {}", updatedCar);
+        servicePdf.createReportPdf(
+                getAlgorithmCache(),
+                methodName,
+                updatedCar,
+                DescriptionAction.VALUE_UPDATE_IN_CACHE.getValue());
+        log.info(DescriptionAction.VALUE_UPDATE_IN_CACHE.getValue() + ": {}", updatedCar);
         return updatedCar;
     }
 
@@ -94,8 +110,12 @@ public class ActionFactory {
         Car deletedCar = cache.get(id);
         if (deletedCar != null) {
             cache.delete(id);
-            log.info(DescriptionAction.VALUE_DELETE_IN_CACHE + ": {}", id);
-            servicePdf.createReportPdf(getAlgorithmCache(), methodName, deletedCar, String.valueOf(DescriptionAction.VALUE_DELETE_IN_CACHE));
+            log.info(DescriptionAction.VALUE_DELETE_IN_CACHE.getValue() + ": {}", id);
+            servicePdf.createReportPdf(
+                    getAlgorithmCache(),
+                    methodName,
+                    deletedCar,
+                    DescriptionAction.VALUE_DELETE_IN_CACHE.getValue());
         }
         target.delete(id);
         return null;
