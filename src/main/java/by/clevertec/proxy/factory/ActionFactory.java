@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import static by.clevertec.reportXML.ReportCreatorXML.writeCarToXml;
 
 @Slf4j
 public class ActionFactory {
@@ -62,7 +61,6 @@ public class ActionFactory {
                         methodName,
                         value,
                         DescriptionAction.VALUE_GET_FROM_BD.getValue() + " и " + DescriptionAction.VALUE_ADD_IN_CACHE.getValue());
-                writeCarToXml(value);
                 log.info(DescriptionAction.VALUE_ADD_IN_CACHE.getValue() + ": {}", value);
             });
             return result;
@@ -75,13 +73,11 @@ public class ActionFactory {
 
         Car carToSave = (Car) args[0];
         Car savedCar = target.save(carToSave);
-
         servicePdf.createReportPdf(
                 getAlgorithmCache(),
                 methodName,
                 savedCar,
                 DescriptionAction.VALUE_ADD_IN_BD.getValue());
-        writeCarToXml(savedCar);
         log.info(DescriptionAction.VALUE_ADD_IN_CACHE.getValue() + ": {}", savedCar);
         return savedCar;
     }

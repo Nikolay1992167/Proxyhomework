@@ -1,8 +1,7 @@
 package by.clevertec.pdfreport;
 
 import by.clevertec.entity.Car;
-import by.clevertec.exception.PDFCreatingException;
-import com.itextpdf.text.DocumentException;
+import by.clevertec.exception.PDFException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -58,6 +57,6 @@ class ServicePdfImplTest {
         Throwable thrown = catchThrowable(() -> servicePdf.createReportPdf(cache, action, car, cacheAction));
 
         // then
-        assertThat(thrown).isInstanceOf(PDFCreatingException.class);
+        assertThat(thrown).isInstanceOf(PDFException.class);
     }
 }

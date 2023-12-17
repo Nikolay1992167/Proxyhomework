@@ -1,7 +1,7 @@
 package by.clevertec.pdfreport;
 
 import by.clevertec.entity.Car;
-import by.clevertec.exception.PDFCreatingException;
+import by.clevertec.exception.PDFException;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
@@ -87,7 +87,7 @@ public class ServicePdfImpl implements ServicePdf {
             document.add(table);
 
         } catch (DocumentException | IOException e) {
-            throw new PDFCreatingException();
+            throw new PDFException();
         } finally {
             if (document != null) {
                 document.close();
