@@ -11,7 +11,7 @@ public interface CarService {
 
     InfoCarDto findById(UUID id);
 
-    List<InfoCarDto> findAll();
+    List<InfoCarDto> findAll(Integer pageNumber, Integer pageSize);
 
     UUID create(CarDto carDto);
 

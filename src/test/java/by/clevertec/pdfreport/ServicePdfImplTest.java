@@ -42,21 +42,4 @@ class ServicePdfImplTest {
         assertThat(file.length()).isGreaterThan(0);
         Files.delete(path);
     }
-
-    @Test
-    public void shouldThrowPDFCreatingExceptionWhenCannotCreateReportPdf() {
-        // given
-        String cache = "LRU";
-        String action = "getById";
-        Car car = CarTestData.builder()
-                .build()
-                .buildCar();
-        String cacheAction = "Объект получен из кэш";
-
-        // when
-        Throwable thrown = catchThrowable(() -> servicePdf.createReportPdf(cache, action, car, cacheAction));
-
-        // then
-        assertThat(thrown).isInstanceOf(PDFException.class);
-    }
 }

@@ -63,10 +63,12 @@ public class CarDAOImpl implements CarDAO {
      * @return list of found cars
      */
     @Override
-    public List<Car> findAll() {
+    public List<Car> findAll(Integer pageNumber, Integer pageSize) {
         List<Car> cars = new ArrayList<>();
-        String sql = "SELECT * FROM cars";
+        String sql = "SELECT * FROM cars ORDER BY id LIMIT ? OFFSET ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, pageSize);
+            statement.setInt(2, pageNumber);
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
                     Car car = getCarFromResultSet(resultSet);

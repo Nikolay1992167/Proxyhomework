@@ -97,10 +97,10 @@ class CarServiceImplTest {
             int expectedSize = 1;
             doReturn(List.of(car))
                     .when(carDAO)
-                    .findAll();
+                    .findAll(0, 10);
 
             // when
-            List<InfoCarDto> actual = carService.findAll();
+            List<InfoCarDto> actual = carService.findAll(1,10);
 
             // then
             assertThat(actual).hasSize(expectedSize);
@@ -121,10 +121,10 @@ class CarServiceImplTest {
                     .toInfoCarDto(car);
             doReturn(List.of(car))
                     .when(carDAO)
-                    .findAll();
+                    .findAll(0,10);
 
             // when
-            List<InfoCarDto> actual = carService.findAll();
+            List<InfoCarDto> actual = carService.findAll(1,10);
 
             // then
             assertThat(actual.get(0)).isEqualTo(expected);
@@ -135,10 +135,10 @@ class CarServiceImplTest {
             // given
             doReturn(List.of())
                     .when(carDAO)
-                    .findAll();
+                    .findAll(0,10);
 
             // when
-            List<InfoCarDto> actual = carService.findAll();
+            List<InfoCarDto> actual = carService.findAll(1,10);
 
             // then
             assertThat(actual).isEmpty();

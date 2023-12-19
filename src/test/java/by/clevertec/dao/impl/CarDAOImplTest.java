@@ -94,7 +94,7 @@ class CarDAOImplTest {
         @SneakyThrows
         void shouldThrowJDBCConnectionExceptionWithExpectedMessage() {
             // given
-            String sql = "SELECT * FROM cars";
+            String sql = "SELECT * FROM cars ORDER BY id LIMIT ? OFFSET ?";
             String expectedMessage = "Проблема соединения с сервером!";
 
             doThrow(new SQLException(expectedMessage))
@@ -102,7 +102,7 @@ class CarDAOImplTest {
                     .prepareStatement(sql);
 
             // when
-            Exception exception = assertThrows(JDBCConnectionException.class, () -> carDAO.findAll());
+            Exception exception = assertThrows(JDBCConnectionException.class, () -> carDAO.findAll(1, 10));
             String actualMessage = exception.getMessage();
             expectedMessage = "Error connecting to the database:" + expectedMessage;
 
@@ -114,7 +114,7 @@ class CarDAOImplTest {
         @SneakyThrows
         void shouldReturnListOfSizeOne() {
             // given
-            String sql = "SELECT * FROM cars";
+            String sql = "SELECT * FROM cars ORDER BY id LIMIT ? OFFSET ?";
             Car car = CarTestData.builder()
                     .build()
                     .buildCar();
@@ -132,7 +132,7 @@ class CarDAOImplTest {
             getMockedCarFromResultSet(car);
 
             // when
-            List<Car> actual = carDAO.findAll();
+            List<Car> actual = carDAO.findAll(1,10);
 
             // then
             assertThat(actual).hasSize(expectedSize);
@@ -142,7 +142,7 @@ class CarDAOImplTest {
         @SneakyThrows
         void shouldReturnListThatContainsExpectedResponse() {
             // given
-            String sql = "SELECT * FROM cars";
+            String sql = "SELECT * FROM cars ORDER BY id LIMIT ? OFFSET ?";
             Car expected = CarTestData.builder()
                     .build()
                     .buildCar();
@@ -159,7 +159,7 @@ class CarDAOImplTest {
             getMockedCarFromResultSet(expected);
 
             // when
-            List<Car> actual = carDAO.findAll();
+            List<Car> actual = carDAO.findAll(1,10);
 
             // then
             assertThat(actual.get(0)).isEqualTo(expected);
@@ -169,7 +169,7 @@ class CarDAOImplTest {
         @SneakyThrows
         void shouldReturnEmptyList() {
             // given
-            String sql = "SELECT * FROM cars";
+            String sql = "SELECT * FROM cars ORDER BY id LIMIT ? OFFSET ?";
 
             doReturn(preparedStatement)
                     .when(connection)
@@ -182,7 +182,7 @@ class CarDAOImplTest {
                     .next();
 
             // when
-            List<Car> actual = carDAO.findAll();
+            List<Car> actual = carDAO.findAll(1,10);
 
             // then
             assertThat(actual).isEmpty();

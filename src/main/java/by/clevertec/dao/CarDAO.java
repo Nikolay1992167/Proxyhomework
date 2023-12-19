@@ -10,7 +10,7 @@ public interface CarDAO {
 
     Optional<Car> getById(UUID id);
 
-    List<Car> findAll();
+    List<Car> findAll(Integer pageNumber, Integer pageSize);
 
     Car save(Car car);
 

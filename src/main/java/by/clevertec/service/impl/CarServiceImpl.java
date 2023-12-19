@@ -7,6 +7,7 @@ import by.clevertec.entity.Car;
 import by.clevertec.exception.NotFoundException;
 import by.clevertec.mapper.CarMapper;
 import by.clevertec.service.CarService;
+import by.clevertec.util.PageChecker;
 import lombok.AllArgsConstructor;
 
 import java.util.List;
@@ -38,8 +39,9 @@ public class CarServiceImpl implements CarService {
      * @return list of information by car
      */
     @Override
-    public List<InfoCarDto> findAll() {
-        List<Car> cars = carDAO.findAll();
+    public List<InfoCarDto> findAll(Integer pageNumber, Integer pageSize) {
+        int offset = PageChecker.checkPage(pageNumber, pageSize);
+        List<Car> cars = carDAO.findAll(offset, pageSize);
         return cars.stream()
                 .map(carMapper::toInfoCarDto)
                 .toList();
