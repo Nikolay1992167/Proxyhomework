@@ -30,13 +30,16 @@ public class ConnectionManager {
     public Connection getJDBCConnection() {
 
         if (connection == null) {
+
             try {
                 Class.forName("org.postgresql.Driver").getDeclaredConstructor().newInstance();
                 connection = DriverManager.getConnection(URL_DB, USER_DB, PASSWORD_DB);
+
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                      NoSuchMethodException |
                      ClassNotFoundException | SQLException e) {
                 log.error(e.getMessage());
+
                 throw new JDBCConnectionException(e.getMessage());
             }
         }

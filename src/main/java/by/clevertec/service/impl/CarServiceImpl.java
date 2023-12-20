@@ -1,23 +1,33 @@
 package by.clevertec.service.impl;
 
 import by.clevertec.dao.CarDAO;
+import by.clevertec.dao.impl.CarDAOImpl;
 import by.clevertec.dto.CarDto;
 import by.clevertec.dto.InfoCarDto;
 import by.clevertec.entity.Car;
 import by.clevertec.exception.NotFoundException;
 import by.clevertec.mapper.CarMapper;
+import by.clevertec.proxy.MyInvocationHandler;
 import by.clevertec.service.CarService;
 import by.clevertec.util.PageChecker;
-import lombok.AllArgsConstructor;
 
+import java.lang.reflect.Proxy;
 import java.util.List;
 import java.util.UUID;
 
-@AllArgsConstructor
+
 public class CarServiceImpl implements CarService {
 
+    private final CarDAO carDAOproxy;
     private final CarMapper carMapper;
-    private final CarDAO carDAO;
+
+
+    public CarServiceImpl(CarMapper carMapper) {
+        this.carMapper = carMapper;
+        CarDAO carDAO = new CarDAOImpl();
+        MyInvocationHandler handler = new MyInvocationHandler(carDAO);
+        this.carDAOproxy = (CarDAO) Proxy.newProxyInstance(MyInvocationHandler.class.getClassLoader(), new Class<?>[]{CarDAO.class}, handler);
+    }
 
     /**
      * Find a car by ID
@@ -28,8 +38,10 @@ public class CarServiceImpl implements CarService {
      */
     @Override
     public InfoCarDto findById(UUID id) {
-        Car car = carDAO.getById(id)
+
+        Car car = carDAOproxy.getById(id)
                 .orElseThrow(() -> new NotFoundException("Car with " + id + " not found!"));
+
         return carMapper.toInfoCarDto(car);
     }
 
@@ -40,8 +52,10 @@ public class CarServiceImpl implements CarService {
      */
     @Override
     public List<InfoCarDto> findAll(Integer pageNumber, Integer pageSize) {
+
         int offset = PageChecker.checkPage(pageNumber, pageSize);
-        List<Car> cars = carDAO.findAll(offset, pageSize);
+        List<Car> cars = carDAOproxy.findAll(offset, pageSize);
+
         return cars.stream()
                 .map(carMapper::toInfoCarDto)
                 .toList();
@@ -54,8 +68,10 @@ public class CarServiceImpl implements CarService {
      */
     @Override
     public UUID create(CarDto carDto) {
+
         Car carToSave = carMapper.toCar(carDto);
-        Car car = carDAO.save(carToSave);
+        Car car = carDAOproxy.save(carToSave);
+
         return car.getId();
     }
 
@@ -67,10 +83,11 @@ public class CarServiceImpl implements CarService {
      */
     @Override
     public void update(UUID id, CarDto carDto) {
-        carDAO.getById(id).ifPresentOrElse(
+
+        carDAOproxy.getById(id).ifPresentOrElse(
                 car -> {
                     Car updatedCar = carMapper.merge(car, carDto);
-                    carDAO.update(updatedCar);
+                    carDAOproxy.update(updatedCar);
                 },
                 () -> {
                     throw new NotFoundException("Car with %s not found!");
@@ -85,6 +102,7 @@ public class CarServiceImpl implements CarService {
      */
     @Override
     public void delete(UUID id) {
-        carDAO.delete(id);
+
+        carDAOproxy.delete(id);
     }
 }

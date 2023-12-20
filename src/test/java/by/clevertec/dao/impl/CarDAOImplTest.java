@@ -1,7 +1,7 @@
 package by.clevertec.dao.impl;
 
 import by.clevertec.entity.Car;
-import by.clevertec.exception.JDBCConnectionException;
+import by.clevertec.exception.CarSQLException;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -11,14 +11,23 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import util.CarTestData;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class CarDAOImplTest {
@@ -39,7 +48,7 @@ class CarDAOImplTest {
         @SneakyThrows
         void shouldThrowJDBCConnectionExceptionWithExpectedMessage() {
             //given
-            String sql = "SELECT * FROM cars WHERE id = ?";
+            String sql = "SELECT * FROM public_car.cars WHERE id = ?";
             UUID id = UUID.fromString("33e4b6c3-c84d-47b7-ac0b-a9f8566d7950");
             String expectedMessage = "Неверный id";
             doThrow(new SQLException(expectedMessage))
@@ -47,7 +56,7 @@ class CarDAOImplTest {
                     .prepareStatement(sql);
 
             // when
-            Exception exception = assertThrows(JDBCConnectionException.class, () -> carDAO.getById(id));
+            Exception exception = assertThrows(CarSQLException.class, () -> carDAO.getById(id));
             String actualMessage = exception.getMessage();
             expectedMessage = "Error connecting to the database:" + expectedMessage;
 
@@ -59,7 +68,7 @@ class CarDAOImplTest {
         @SneakyThrows
         void testShouldReturnExpectedResponse() {
             // given
-            String sql = "SELECT * FROM cars WHERE id = ?";
+            String sql = "SELECT * FROM public_car.cars WHERE id = ?";
             Car car = CarTestData.builder()
                     .build()
                     .buildCar();
@@ -94,7 +103,7 @@ class CarDAOImplTest {
         @SneakyThrows
         void shouldThrowJDBCConnectionExceptionWithExpectedMessage() {
             // given
-            String sql = "SELECT * FROM cars ORDER BY id LIMIT ? OFFSET ?";
+            String sql = "SELECT * FROM public_car.cars ORDER BY id LIMIT ? OFFSET ?";
             String expectedMessage = "Проблема соединения с сервером!";
 
             doThrow(new SQLException(expectedMessage))
@@ -102,7 +111,7 @@ class CarDAOImplTest {
                     .prepareStatement(sql);
 
             // when
-            Exception exception = assertThrows(JDBCConnectionException.class, () -> carDAO.findAll(1, 10));
+            Exception exception = assertThrows(CarSQLException.class, () -> carDAO.findAll(1, 10));
             String actualMessage = exception.getMessage();
             expectedMessage = "Error connecting to the database:" + expectedMessage;
 
@@ -114,7 +123,7 @@ class CarDAOImplTest {
         @SneakyThrows
         void shouldReturnListOfSizeOne() {
             // given
-            String sql = "SELECT * FROM cars ORDER BY id LIMIT ? OFFSET ?";
+            String sql = "SELECT * FROM public_car.cars ORDER BY id LIMIT ? OFFSET ?";
             Car car = CarTestData.builder()
                     .build()
                     .buildCar();
@@ -132,7 +141,7 @@ class CarDAOImplTest {
             getMockedCarFromResultSet(car);
 
             // when
-            List<Car> actual = carDAO.findAll(1,10);
+            List<Car> actual = carDAO.findAll(1, 10);
 
             // then
             assertThat(actual).hasSize(expectedSize);
@@ -142,7 +151,7 @@ class CarDAOImplTest {
         @SneakyThrows
         void shouldReturnListThatContainsExpectedResponse() {
             // given
-            String sql = "SELECT * FROM cars ORDER BY id LIMIT ? OFFSET ?";
+            String sql = "SELECT * FROM public_car.cars ORDER BY id LIMIT ? OFFSET ?";
             Car expected = CarTestData.builder()
                     .build()
                     .buildCar();
@@ -159,7 +168,7 @@ class CarDAOImplTest {
             getMockedCarFromResultSet(expected);
 
             // when
-            List<Car> actual = carDAO.findAll(1,10);
+            List<Car> actual = carDAO.findAll(1, 10);
 
             // then
             assertThat(actual.get(0)).isEqualTo(expected);
@@ -169,7 +178,7 @@ class CarDAOImplTest {
         @SneakyThrows
         void shouldReturnEmptyList() {
             // given
-            String sql = "SELECT * FROM cars ORDER BY id LIMIT ? OFFSET ?";
+            String sql = "SELECT * FROM public_car.cars ORDER BY id LIMIT ? OFFSET ?";
 
             doReturn(preparedStatement)
                     .when(connection)
@@ -182,7 +191,7 @@ class CarDAOImplTest {
                     .next();
 
             // when
-            List<Car> actual = carDAO.findAll(1,10);
+            List<Car> actual = carDAO.findAll(1, 10);
 
             // then
             assertThat(actual).isEmpty();
@@ -196,7 +205,7 @@ class CarDAOImplTest {
         @SneakyThrows
         void shouldThrowJDBCConnectionExceptionWithExpectedMessage() {
             // given
-            String sql = "INSERT INTO cars (name, description, price) VALUES (?,?,?)";
+            String sql = "INSERT INTO public_car.cars (name, description, price) VALUES (?,?,?)";
             Car car = CarTestData.builder()
                     .build()
                     .buildCar();
@@ -209,7 +218,7 @@ class CarDAOImplTest {
             connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
             // when
-            Exception exception = assertThrows(JDBCConnectionException.class, () -> carDAO.save(car));
+            Exception exception = assertThrows(CarSQLException.class, () -> carDAO.save(car));
             String actualMessage = exception.getMessage();
             expectedMessage = "Error connecting to the database:" + expectedMessage;
 
@@ -221,7 +230,7 @@ class CarDAOImplTest {
         @SneakyThrows
         void shouldReturnExpectedResponse() {
             // given
-            String sql = "INSERT INTO cars (name, description, price) VALUES (?,?,?)";
+            String sql = "INSERT INTO public_car.cars (name, description, price) VALUES (?,?,?)";
             Car car = CarTestData.builder()
                     .build()
                     .buildCar();
@@ -259,7 +268,7 @@ class CarDAOImplTest {
         @SneakyThrows
         void shouldThrowJDBCConnectionExceptionWithExpectedMessage() {
             // given
-            String sql = "UPDATE cars SET name = ?, description = ?, price = ? WHERE id = ?";
+            String sql = "UPDATE public_car.cars SET name = ?, description = ?, price = ? WHERE id = ?";
             Car car = CarTestData.builder()
                     .build()
                     .buildCar();
@@ -271,7 +280,7 @@ class CarDAOImplTest {
             connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
             // when
-            Exception exception = assertThrows(JDBCConnectionException.class, () -> carDAO.update(car));
+            Exception exception = assertThrows(CarSQLException.class, () -> carDAO.update(car));
             String actualMessage = exception.getMessage();
             expectedMessage = "Error connecting to the database:" + expectedMessage;
 
@@ -283,7 +292,7 @@ class CarDAOImplTest {
         @SneakyThrows
         void shouldReturnExpectedResponse() {
             // given
-            String sql = "UPDATE cars SET name = ?, description = ?, price = ? WHERE id = ?";
+            String sql = "UPDATE public_car.cars SET name = ?, description = ?, price = ? WHERE id = ?";
             Car car = CarTestData.builder()
                     .build()
                     .buildCar();
@@ -324,7 +333,7 @@ class CarDAOImplTest {
         @SneakyThrows
         void testShouldThrowJDBCConnectionExceptionWithExpectedMessage() {
             // given
-            String sql = "DELETE FROM cars WHERE id = ?";
+            String sql = "DELETE FROM public_car.cars WHERE id = ?";
             Car car = CarTestData.builder()
                     .build()
                     .buildCar();
@@ -336,7 +345,7 @@ class CarDAOImplTest {
                     .prepareStatement(sql);
 
             // when
-            Exception exception = assertThrows(JDBCConnectionException.class, () -> carDAO.delete(id));
+            Exception exception = assertThrows(CarSQLException.class, () -> carDAO.delete(id));
             String actualMessage = exception.getMessage();
             expectedMessage = "Error connecting to the database:" + expectedMessage;
 
@@ -348,7 +357,7 @@ class CarDAOImplTest {
         @SneakyThrows
         void testShouldReturnExpectedResponse() {
             // given
-            String sql = "DELETE FROM cars WHERE id = ?";
+            String sql = "DELETE FROM public_car.cars WHERE id = ?";
             Car car = CarTestData.builder()
                     .build()
                     .buildCar();

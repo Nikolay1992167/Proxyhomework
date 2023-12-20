@@ -44,12 +44,15 @@ public class LFUCacheImpl<K, V> implements Cache<K, V> {
             return null;
         }
         int frequency = frequencyMap.get(key);
+
         frequencyMap.put(key, frequency + 1);
         frequencySets.get(frequency).remove(key);
+
         if (frequency == minFrequency && frequencySets.get(frequency).isEmpty()) {
             minFrequency++;
         }
         frequencySets.computeIfAbsent(frequency + 1, k -> new LinkedHashSet<>()).add(key);
+
         return valueMap.get(key);
     }
 
@@ -68,12 +71,14 @@ public class LFUCacheImpl<K, V> implements Cache<K, V> {
         if (capacity <= 0) {
             return null;
         }
+
         if (valueMap.containsKey(key)) {
             V oldValue = valueMap.get(key);
             valueMap.put(key, value);
             get(key);
             return oldValue;
         }
+
         if (valueMap.size() >= capacity) {
             K removingKey = frequencySets.get(minFrequency).iterator().next();
             frequencySets.get(minFrequency).remove(removingKey);
@@ -84,6 +89,7 @@ public class LFUCacheImpl<K, V> implements Cache<K, V> {
         frequencyMap.put(key, 1);
         frequencySets.computeIfAbsent(1, k -> new LinkedHashSet<>()).add(key);
         minFrequency = 1;
+
         return null;
     }
 
@@ -101,12 +107,15 @@ public class LFUCacheImpl<K, V> implements Cache<K, V> {
         if (!valueMap.containsKey(key)) {
             return null;
         }
+
         int frequency = frequencyMap.get(key);
         frequencyMap.remove(key);
         frequencySets.get(frequency).remove(key);
+
         if (frequency == minFrequency && frequencySets.get(frequency).isEmpty()) {
             minFrequency++;
         }
+
         return valueMap.remove(key);
     }
 }

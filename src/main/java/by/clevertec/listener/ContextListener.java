@@ -12,9 +12,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -24,28 +21,48 @@ import java.util.stream.Collectors;
 @WebListener
 public class ContextListener implements ServletContextListener {
 
-    /**
-     * A method for executing an SQL script to create a table and insert data.
-     * The method reads parameters from a .sql file.
-     * In case of exceptions, the method writes an error message to the logger and throws InitializationSQLException.
-     */
+    private static final String PATH_SQL_CREATE = "/db/create_sql_V1.sql";
+    private static final String PATH_SQL_DROP = "/db/drop_sql_V1.sql";
+
     @Override
     public void contextInitialized(ServletContextEvent sce) {
+
         try {
             Connection connection = ConnectionManager.getJDBCConnection();
+
             Statement statement = connection.createStatement();
-            statement.execute(readScript());
+            statement.execute(readScript(PATH_SQL_CREATE));
+
         } catch (SQLException e) {
             throw new InitializationSQLException("Error when executing SQL script");
         }
     }
 
-    private static String readScript() {
-        try (InputStream in = ContextListener.class.getResourceAsStream("/db/create_sql_V1.sql");
+    @Override
+    public void contextDestroyed(ServletContextEvent sce) {
+
+        try {
+            Connection connection = ConnectionManager.getJDBCConnection();
+
+            Statement statement = connection.createStatement();
+            statement.execute(readScript(PATH_SQL_DROP));
+
+        } catch (SQLException e) {
+
+            throw new InitializationSQLException("Error when executing SQL script DROP");
+        }
+    }
+
+    private static String readScript(String pathSQLScript) {
+
+        try (InputStream in = ContextListener.class.getResourceAsStream(pathSQLScript);
              BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
+
             return reader.lines().collect(Collectors.joining("\n"));
+
         } catch (IOException ex) {
-            log.error("Error when executing SQL script", ex);
+
+            log.error("Error when reading SQL script", ex);
             throw new InitializationSQLException(ex.getMessage());
         }
     }

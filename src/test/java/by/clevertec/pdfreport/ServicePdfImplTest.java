@@ -1,7 +1,7 @@
 package by.clevertec.pdfreport;
 
 import by.clevertec.entity.Car;
-import by.clevertec.exception.PDFException;
+import by.clevertec.pdfreport.impl.ServicePdfImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -14,7 +14,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchThrowable;
 
 @ExtendWith(MockitoExtension.class)
 class ServicePdfImplTest {

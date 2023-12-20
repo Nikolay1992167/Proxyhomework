@@ -2,12 +2,9 @@ package by.clevertec.dao.impl;
 
 import by.clevertec.dao.CarDAO;
 import by.clevertec.entity.Car;
-import by.clevertec.exception.JDBCConnectionException;
-
-import by.clevertec.exception.ResourceSqlException;
-import by.clevertec.proxy.annotations.MyAnnotation;
+import by.clevertec.exception.CarSQLException;
+import by.clevertec.proxy.annotations.ReflectionCheck;
 import by.clevertec.util.ConnectionManager;
-
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -37,23 +34,26 @@ public class CarDAOImpl implements CarDAO {
      * @return Optional<Product>  if found, otherwise  Optional.empty()
      */
     @Override
-    @MyAnnotation
+    @ReflectionCheck
     public Optional<Car> getById(UUID id) {
-        String sql = "SELECT * FROM cars WHERE id = ?";
+
+        String sql = "SELECT * FROM public_car.cars WHERE id = ?";
         Optional<Car> car = Optional.empty();
+
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setObject(1, (id));
+
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
                     car = Optional.of(getCarFromResultSet(resultSet));
                 }
-            } catch (SQLException e) {
-                throw new ResourceSqlException();
             }
         } catch (SQLException e) {
             log.error(e.getMessage());
-            throw new JDBCConnectionException(e.getMessage());
+
+            throw new CarSQLException(e.getMessage());
         }
+
         return car;
     }
 
@@ -64,12 +64,16 @@ public class CarDAOImpl implements CarDAO {
      */
     @Override
     public List<Car> findAll(Integer pageNumber, Integer pageSize) {
+
         List<Car> cars = new ArrayList<>();
-        String sql = "SELECT * FROM cars ORDER BY id LIMIT ? OFFSET ?";
+        String sql = "SELECT * FROM public_car.cars ORDER BY id LIMIT ? OFFSET ?";
+
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, pageSize);
             statement.setInt(2, pageNumber);
+
             try (ResultSet resultSet = statement.executeQuery()) {
+
                 while (resultSet.next()) {
                     Car car = getCarFromResultSet(resultSet);
                     cars.add(car);
@@ -77,8 +81,10 @@ public class CarDAOImpl implements CarDAO {
             }
         } catch (SQLException e) {
             log.error(e.getMessage());
-            throw new JDBCConnectionException(e.getMessage());
+
+            throw new CarSQLException(e.getMessage());
         }
+
         return cars;
     }
 
@@ -87,26 +93,27 @@ public class CarDAOImpl implements CarDAO {
      *
      * @param car saved car
      * @return saved car in memory
-     * @throws IllegalArgumentException if supplied car null
      */
     @Override
-    @MyAnnotation
+    @ReflectionCheck
     public Car save(Car car) {
-        if (car == null) {
-            throw new IllegalArgumentException("Car cannot be null");
-        }
-        String sql = "INSERT INTO cars (name, description, price) VALUES (?,?,?)";
+
+        String sql = "INSERT INTO public_car.cars (name, description, price) VALUES (?,?,?)";
+
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             setCarValuesInStatement(statement, car);
             statement.executeUpdate();
             ResultSet resultSet = statement.getGeneratedKeys();
+
             if (resultSet.next()) {
                 UUID id = UUID.fromString(resultSet.getString(1));
                 car.setId(id);
             }
         } catch (SQLException e) {
-            throw new JDBCConnectionException(e.getMessage());
+
+            throw new CarSQLException(e.getMessage());
         }
+
         return car;
     }
 
@@ -115,28 +122,30 @@ public class CarDAOImpl implements CarDAO {
      *
      * @param car update car
      * @return update car in memory
-     * @throws IllegalArgumentException if otherwise car null
      */
     @Override
-    @MyAnnotation
+    @ReflectionCheck
     public Car update(Car car) {
-        if (car == null) {
-            throw new IllegalArgumentException("Car cannot be null");
-        }
-        String sql = "UPDATE cars SET name = ?, description = ?, price = ? WHERE id = ?";
+
+        String sql = "UPDATE public_car.cars SET name = ?, description = ?, price = ? WHERE id = ?";
+
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             setCarValuesInStatement(statement, car);
             statement.setObject(4, car.getId());
             statement.executeUpdate();
+
             ResultSet resultSet = statement.getGeneratedKeys();
+
             if (resultSet.next()) {
                 UUID id = UUID.fromString(resultSet.getString(1));
                 car.setId(id);
             }
         } catch (SQLException e) {
             log.error(e.getMessage());
-            throw new JDBCConnectionException(e.getMessage());
+
+            throw new CarSQLException(e.getMessage());
         }
+
         return car;
     }
 
@@ -146,15 +155,19 @@ public class CarDAOImpl implements CarDAO {
      * @param id car id
      */
     @Override
-    @MyAnnotation
+    @ReflectionCheck
     public void delete(UUID id) {
-        String sql = "DELETE FROM cars WHERE id = ?";
+
+        String sql = "DELETE FROM public_car.cars WHERE id = ?";
+
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setObject(1, id);
             statement.executeUpdate();
+
         } catch (SQLException e) {
             log.error(e.getMessage());
-            throw new JDBCConnectionException(e.getMessage());
+
+            throw new CarSQLException(e.getMessage());
         }
     }
 

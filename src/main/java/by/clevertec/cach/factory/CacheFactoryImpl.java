@@ -13,6 +13,7 @@ public class CacheFactoryImpl<K, V> implements CacheFactory<K, V> {
 
     @Override
     public Cache<K, V> createCacheType() {
+
         return LRU_CACHE.equals(CACHE_ALGORITHM)
                 ? new LRUCacheImpl<>(CACHE_CAPACITY)
                 : new LFUCacheImpl<>(CACHE_CAPACITY);

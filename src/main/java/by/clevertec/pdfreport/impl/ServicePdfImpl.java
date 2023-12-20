@@ -1,7 +1,8 @@
-package by.clevertec.pdfreport;
+package by.clevertec.pdfreport.impl;
 
 import by.clevertec.entity.Car;
 import by.clevertec.exception.PDFException;
+import by.clevertec.pdfreport.ServicePdf;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
@@ -20,6 +21,9 @@ import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfWriter;
 
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -87,6 +91,7 @@ public class ServicePdfImpl implements ServicePdf {
             document.add(table);
 
         } catch (DocumentException | IOException e) {
+
             throw new PDFException();
         } finally {
             if (document != null) {
@@ -101,13 +106,18 @@ public class ServicePdfImpl implements ServicePdf {
 
     private Font setsFont(int size) {
 
-        final String FONT = "src/main/resources/lato-light.ttf";
-        return FontFactory.getFont(FONT, "cp1251", BaseFont.EMBEDDED, size);
+        URL fontURL = ServiceCreateFileInfPdfImpl.class.getResource("/pdf/lato-light.ttf");
+        String font = URLDecoder.decode(fontURL.getPath(), StandardCharsets.UTF_8);
+
+        return FontFactory.getFont(font, "cp1251", BaseFont.EMBEDDED, size);
     }
 
     private void addBackgroundForFile(PdfWriter writer) throws IOException {
 
-        PdfReader backgroundReader = new PdfReader("src/main/resources/pdf/Clevertec_Template.pdf");
+        URL templateURL = ServiceCreateFileInfPdfImpl.class.getResource("/pdf/Clevertec_Template.pdf");
+        String template = URLDecoder.decode(templateURL.getPath(), StandardCharsets.UTF_8);
+
+        PdfReader backgroundReader = new PdfReader(template);
         PdfImportedPage background = writer.getImportedPage(backgroundReader, 1);
         PdfContentByte contentByte = writer.getDirectContentUnder();
         contentByte.addTemplate(background, 0, 0);
@@ -115,9 +125,15 @@ public class ServicePdfImpl implements ServicePdf {
 
     private Path getPath() {
 
+        URL pdfURL = ServiceCreateFileInfPdfImpl.class.getResource("/pdf");
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMHHmm");
         String dateTime = LocalDateTime.now().format(formatter);
         int randomNum = new Random().nextInt(900) + 100;
-        return Paths.get("src/main/resources/pdf/reportPDF" + dateTime + randomNum + ".pdf");
+        String pdf = URLDecoder.decode(pdfURL.getPath(), StandardCharsets.UTF_8)
+                .concat("reportPDF" + dateTime + randomNum + ".pdf")
+                .substring(1);
+
+        return Paths.get(pdf);
     }
 }
