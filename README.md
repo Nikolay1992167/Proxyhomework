@@ -23,7 +23,7 @@
 "SELECT * FROM public_car.cars ORDER BY id LIMIT ? OFFSET ?".
 При реализации генерации файла pdf, содержащего информацию об объекте, была предусмотрена функциональность работы из 
 развёрнутого архива и все генерируемые файлы размещаются в директории build/libs/exploded/ProxyHW-1.0-
-SNAPSHOT.war/WEB-INF/classes/pdf. 
+SNAPSHOT.war/WEB-INF/classes/pdf. Примеры получаемых файлов размещены в папке resources/filepdf.
 Также при использовании сервлетов сохранена функциональность работы прокси и генерации отчета в формате pdf. Файлы
 создаются в директории указанной выше.
 Для выполнения условий 6 пункта задания создан класс ContextListener, который помечен аннотацией @WebListener. В данном
@@ -135,6 +135,6 @@ SNAPSHOT.war/WEB-INF/classes/pdf.
 
 ### GenerationFilePdfServlet
 * **GET | Generates file pdf about car by id**
-* http://localhost:8080/cars?id=bd114dde-0f0c-4139-85a0-1011389a6508
+* http://localhost:8080/generation?id=bd114dde-0f0c-4139-85a0-1011389a6508
 
 Благодарю за уделённое время! Буду рад детальному ревью и хотел бы услышать мнение о README.md.

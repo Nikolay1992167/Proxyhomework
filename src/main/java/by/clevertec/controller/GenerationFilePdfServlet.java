@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.UUID;
 
-@WebServlet("/generate")
+@WebServlet("/generation")
 public class GenerationFilePdfServlet extends AbstractCarServlet {
     private final ServiceCreateFileInfPdf information = new ServiceCreateFileInfPdfImpl();
 
