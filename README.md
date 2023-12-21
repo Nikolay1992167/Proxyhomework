@@ -32,8 +32,8 @@ SNAPSHOT.war/WEB-INF/classes/pdf.
 В приложении реализовано два фильтра: 1. CodingFilter, который проверяет валидность данных на соответствие системе 
 кодирования UTF-8; 2. CheckNullFilter, который проверяет объекты CarDto на null.
 Хотел реализовать класс ApplicationConfig, в котором была бы выполнена инициализация маппера, сервисов, подключения к бд, 
-но упёрся в ошибку при работе с прокси 'Method threw 'java.lang.reflect.UndeclaredThrowableException' exception. Cannot 
-evaluate jdk.proxy3.$Proxy8.toString()', пока устранить не получается.
+но упёрся в ошибку при работе с прокси 'Method threw 'java.lang.reflect.UndeclaredThrowableException' exception.', пока 
+устранить не получается.
 
 ### Технологии применённые в проекте
 

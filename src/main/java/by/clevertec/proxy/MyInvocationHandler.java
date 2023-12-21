@@ -53,13 +53,17 @@ public class MyInvocationHandler implements InvocationHandler {
         return Optional.ofNullable(method.getDeclaredAnnotation(ReflectionCheck.class));
     }
 
-    private Object uncheckedInvoke(Method method, Object[] args) throws RuntimeException {
+    private Object uncheckedInvoke(Method method, Object[] args) {
 
         try {
             return method.invoke(target, args);
         } catch (IllegalAccessException | InvocationTargetException e) {
-
-            throw new ProxyInvocationFailedException("Не удалось вызвать метод " + method.getName(), e);
+            Throwable cause = e.getCause();
+            if (cause instanceof RuntimeException) {
+                throw (RuntimeException) cause;
+            } else {
+                throw new RuntimeException(cause);
+            }
         }
     }
 

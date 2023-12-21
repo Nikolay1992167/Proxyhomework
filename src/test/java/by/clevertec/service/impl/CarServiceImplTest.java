@@ -6,6 +6,7 @@ import by.clevertec.dto.InfoCarDto;
 import by.clevertec.entity.Car;
 import by.clevertec.exception.NotFoundException;
 import by.clevertec.mapper.CarMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,7 +29,10 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class CarServiceImplTest {
@@ -38,9 +42,14 @@ class CarServiceImplTest {
     @Mock
     private CarMapper mapper;
     @Mock
-    private CarDAO carDAO;
+    private CarDAO carDAOproxy;
     @Captor
     private ArgumentCaptor<Car> captor;
+
+    @BeforeEach
+    public void init() {
+        carService.setCarDAOproxy(carDAOproxy);
+    }
 
     @Nested
     class FindByIdTest {
@@ -70,18 +79,16 @@ class CarServiceImplTest {
                     .buildCar();
             UUID id = expected.id();
 
-            doReturn(expected)
-                    .when(mapper)
-                    .toInfoCarDto(car);
-            doReturn(Optional.of(car))
-                    .when(carDAO)
-                    .getById(id);
+            when(carDAOproxy.getById(id)).thenReturn(Optional.of(car));
+            when(mapper.toInfoCarDto(car)).thenReturn(expected);
 
             // when
             InfoCarDto actual = carService.findById(id);
 
             // then
             assertThat(actual).isEqualTo(expected);
+            verify(carDAOproxy, times(1)).getById(id);
+            verify(mapper, times(1)).toInfoCarDto(car);
         }
     }
 
@@ -96,11 +103,11 @@ class CarServiceImplTest {
                     .buildCar();
             int expectedSize = 1;
             doReturn(List.of(car))
-                    .when(carDAO)
+                    .when(carDAOproxy)
                     .findAll(0, 10);
 
             // when
-            List<InfoCarDto> actual = carService.findAll(1,10);
+            List<InfoCarDto> actual = carService.findAll(1, 10);
 
             // then
             assertThat(actual).hasSize(expectedSize);
@@ -120,11 +127,11 @@ class CarServiceImplTest {
                     .when(mapper)
                     .toInfoCarDto(car);
             doReturn(List.of(car))
-                    .when(carDAO)
-                    .findAll(0,10);
+                    .when(carDAOproxy)
+                    .findAll(0, 10);
 
             // when
-            List<InfoCarDto> actual = carService.findAll(1,10);
+            List<InfoCarDto> actual = carService.findAll(1, 10);
 
             // then
             assertThat(actual.get(0)).isEqualTo(expected);
@@ -134,11 +141,11 @@ class CarServiceImplTest {
         void shouldReturnEmptyList() {
             // given
             doReturn(List.of())
-                    .when(carDAO)
-                    .findAll(0,10);
+                    .when(carDAOproxy)
+                    .findAll(0, 10);
 
             // when
-            List<InfoCarDto> actual = carService.findAll(1,10);
+            List<InfoCarDto> actual = carService.findAll(1, 10);
 
             // then
             assertThat(actual).isEmpty();
@@ -159,11 +166,11 @@ class CarServiceImplTest {
                     .when(mapper)
                     .toCar(carDto);
             doReturn(expected)
-                    .when(carDAO)
+                    .when(carDAOproxy)
                     .save(expected);
 
             carService.create(carDto);
-            verify(carDAO).save(captor.capture());
+            verify(carDAOproxy).save(captor.capture());
 
             Car captorCar = captor.getValue();
             assertThat(captorCar).isEqualTo(expected);
@@ -188,14 +195,14 @@ class CarServiceImplTest {
                     .build()
                     .buildCar();
 
-            when(carDAO.getById(id)).thenReturn(Optional.of(car));
+            when(carDAOproxy.getById(id)).thenReturn(Optional.of(car));
             when(mapper.merge(car, carDto)).thenReturn(updatedCar);
 
             // when
             carService.update(id, carDto);
 
             // then
-            verify(carDAO).update(captor.capture());
+            verify(carDAOproxy).update(captor.capture());
             Car capturedCar = captor.getValue();
             assertThat(capturedCar).isEqualTo(updatedCar);
         }
@@ -208,7 +215,7 @@ class CarServiceImplTest {
                     .build()
                     .buildCarDto();
 
-            when(carDAO.getById(id)).thenReturn(Optional.empty());
+            when(carDAOproxy.getById(id)).thenReturn(Optional.empty());
 
             // when, then
             assertThatThrownBy(() -> carService.update(id, carDto))
@@ -218,7 +225,7 @@ class CarServiceImplTest {
     }
 
     @Nested
-    class DeleteTest{
+    class DeleteTest {
         @Test
         void testShouldReturnExpectedResponse() {
             // given
@@ -228,7 +235,7 @@ class CarServiceImplTest {
             carService.delete(id);
 
             // then
-            verify(carDAO).delete(id);
+            verify(carDAOproxy).delete(id);
         }
     }
 

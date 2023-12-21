@@ -55,6 +55,7 @@ public class ServiceCreateFileInfPdfImpl implements ServiceCreateFileInfPdf {
             writer.close();
 
         } catch (DocumentException | IOException e) {
+
             throw new PDFException();
         }
     }
@@ -74,7 +75,7 @@ public class ServiceCreateFileInfPdfImpl implements ServiceCreateFileInfPdf {
         return new PathResult(pdf, template);
     }
 
-    private record PathResult(String pdf, String template) {
+    public record PathResult(String pdf, String template) {
     }
 
     private Font setsFont() {

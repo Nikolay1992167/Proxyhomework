@@ -15,10 +15,9 @@ import java.lang.reflect.Proxy;
 import java.util.List;
 import java.util.UUID;
 
-
 public class CarServiceImpl implements CarService {
 
-    private final CarDAO carDAOproxy;
+    private CarDAO carDAOproxy;
     private final CarMapper carMapper;
 
     public CarServiceImpl(CarMapper carMapper) {
@@ -103,5 +102,9 @@ public class CarServiceImpl implements CarService {
     public void delete(UUID id) {
 
         carDAOproxy.delete(id);
+    }
+
+    public void setCarDAOproxy(CarDAO carDAOproxy) {
+        this.carDAOproxy = carDAOproxy;
     }
 }
