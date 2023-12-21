@@ -5,7 +5,6 @@ import by.clevertec.cach.factory.CacheFactory;
 import by.clevertec.cach.factory.CacheFactoryImpl;
 import by.clevertec.dao.CarDAO;
 import by.clevertec.entity.Car;
-import by.clevertec.exception.ProxyInvocationFailedException;
 import by.clevertec.proxy.annotations.ReflectionCheck;
 import by.clevertec.proxy.factory.Action;
 import by.clevertec.proxy.factory.ActionFactory;
