@@ -21,7 +21,6 @@ public class CarServiceImpl implements CarService {
     private final CarDAO carDAOproxy;
     private final CarMapper carMapper;
 
-
     public CarServiceImpl(CarMapper carMapper) {
         this.carMapper = carMapper;
         CarDAO carDAO = new CarDAOImpl();

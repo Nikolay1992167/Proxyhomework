@@ -26,11 +26,13 @@ public class CheckNullFilter extends HttpFilter {
 
         if (req.getMethod().equalsIgnoreCase("POST") || req.getMethod().equalsIgnoreCase("PUT")) {
 
-            BufferedReader readerData = req.getReader();
+            req.setCharacterEncoding("UTF-8");
+
+            BufferedReader reader = req.getReader();
             StringBuilder result = new StringBuilder();
             String line;
 
-            while ((line = readerData.readLine()) != null) {
+            while ((line = reader.readLine()) != null) {
                 result.append(line);
             }
 
@@ -40,8 +42,8 @@ public class CheckNullFilter extends HttpFilter {
                 resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "CarDto cannot be null");
                 return;
             }
+            req.setAttribute("carDto", carDto);
         }
-
         chain.doFilter(request, response);
     }
 }

@@ -24,12 +24,13 @@ ext {
     validationVersion = '2.0.1.Final'
     itextpdfVersion = '5.5.13.3'
     gsonVersion = '2.10.1'
+    servletVersion = '4.0.1'
 }
 
 dependencies {
 
     implementation ("com.google.code.gson:gson:${ gsonVersion}")
-    compileOnly 'javax.servlet:javax.servlet-api:4.0.1'
+    compileOnly "javax.servlet:javax.servlet-api:${servletVersion}"
     implementation "javax.validation:validation-api:${validationVersion}"
     implementation "com.itextpdf:itextpdf:${itextpdfVersion}"
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}"

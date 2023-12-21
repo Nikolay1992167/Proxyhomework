@@ -6,7 +6,6 @@ import by.clevertec.dto.InfoCarDto;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
@@ -34,42 +33,24 @@ public class CarServlet extends AbstractCarServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
-        BufferedReader reader = req.getReader();
-        StringBuilder result = new StringBuilder();
-        String line;
-
-        while ((line = reader.readLine()) != null) {
-            result.append(line);
-        }
-
-        CarDto carDto = gson.fromJson(result.toString(), CarDto.class);
-
-        String carDtoToJson = gson.toJson(carDto);
+        CarDto carDtoToCreate = (CarDto) req.getAttribute("carDto");
+        carService.create(carDtoToCreate);
 
         PrintWriter printWriter = resp.getWriter();
         resp.setStatus(201);
-        printWriter.print(carDtoToJson);
         printWriter.flush();
     }
 
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
-        BufferedReader reader = req.getReader();
-        StringBuilder result = new StringBuilder();
-        String line;
-
-        while ((line = reader.readLine()) != null) {
-            result.append(line);
-        }
-
         String id = req.getParameter("id");
 
-        CarDto carDto = gson.fromJson(result.toString(), CarDto.class);
-        carService.update(UUID.fromString(id), carDto);
+        CarDto carDtoToUpdate = (CarDto) req.getAttribute("carDto");
+        carService.update(UUID.fromString(id), carDtoToUpdate);
 
         PrintWriter printWriter = resp.getWriter();
-        String carDtoToJson = gson.toJson(carDto);
+        String carDtoToJson = gson.toJson(carDtoToUpdate);
         printWriter.print(carDtoToJson);
         printWriter.flush();
     }
