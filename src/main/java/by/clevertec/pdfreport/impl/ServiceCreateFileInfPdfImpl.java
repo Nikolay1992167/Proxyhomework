@@ -13,6 +13,7 @@ import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfImportedPage;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfWriter;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.net.URL;
@@ -25,6 +26,7 @@ import java.util.Arrays;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+@Service
 public class ServiceCreateFileInfPdfImpl implements ServiceCreateFileInfPdf {
 
     @Override

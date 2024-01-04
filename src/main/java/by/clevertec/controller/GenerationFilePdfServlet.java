@@ -4,6 +4,7 @@ import by.clevertec.dto.InfoCarDto;
 import by.clevertec.exception.NotFoundException;
 import by.clevertec.pdfreport.ServiceCreateFileInfPdf;
 import by.clevertec.pdfreport.impl.ServiceCreateFileInfPdfImpl;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -11,9 +12,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.UUID;
 
 @WebServlet("/generation")
+@Component
 public class GenerationFilePdfServlet extends AbstractCarServlet {
-    private final ServiceCreateFileInfPdf information = new ServiceCreateFileInfPdfImpl();
-
+    private final ServiceCreateFileInfPdf informationService = context.getBean(ServiceCreateFileInfPdfImpl.class);
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 
@@ -27,7 +28,7 @@ public class GenerationFilePdfServlet extends AbstractCarServlet {
 
         if (carDto != null) {
             String carDtoToJson = gson.toJson(carDto);
-            information.creatFilePdfWithInfAboutCar(carDtoToJson);
+            informationService.creatFilePdfWithInfAboutCar(carDtoToJson);
         } else {
 
             throw new NotFoundException("The requested object was not found!");

@@ -8,6 +8,8 @@ import by.clevertec.entity.Car;
 import by.clevertec.proxy.annotations.ReflectionCheck;
 import by.clevertec.proxy.factory.Action;
 import by.clevertec.proxy.factory.ActionFactory;
+import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Service;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
@@ -15,16 +17,17 @@ import java.lang.reflect.Method;
 import java.util.Optional;
 import java.util.UUID;
 
+@Service
 public class MyInvocationHandler implements InvocationHandler {
 
     private final CarDAO target;
     private final Class<?> targetClass;
     private final Cache<UUID, Car> cache;
 
-    public MyInvocationHandler(CarDAO target) {
+    public MyInvocationHandler(CarDAO target, Environment env) {
         this.target = target;
         this.targetClass = target.getClass();
-        CacheFactory<UUID, Car> cacheFactory = new CacheFactoryImpl<>();
+        CacheFactory<UUID, Car> cacheFactory = new CacheFactoryImpl<>(env);
         this.cache = cacheFactory.createCacheType();
     }
 

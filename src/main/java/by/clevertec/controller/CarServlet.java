@@ -2,6 +2,7 @@ package by.clevertec.controller;
 
 import by.clevertec.dto.CarDto;
 import by.clevertec.dto.InfoCarDto;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 @WebServlet("/cars")
+@Component
 public class CarServlet extends AbstractCarServlet {
 
     @Override

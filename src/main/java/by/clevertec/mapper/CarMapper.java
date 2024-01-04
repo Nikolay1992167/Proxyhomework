@@ -7,8 +7,10 @@ import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
+import org.springframework.stereotype.Component;
 
-@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE,
+@Component
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE,
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface CarMapper {
 

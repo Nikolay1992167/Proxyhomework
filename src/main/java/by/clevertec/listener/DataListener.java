@@ -1,12 +1,14 @@
 package by.clevertec.listener;
 
 import by.clevertec.exception.InitializationSQLException;
-import by.clevertec.util.ConnectionManager;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.ContextStoppedEvent;
+import org.springframework.stereotype.Component;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-import javax.servlet.annotation.WebListener;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,50 +20,33 @@ import java.sql.Statement;
 import java.util.stream.Collectors;
 
 @Slf4j
-@WebListener
-public class ContextListener implements ServletContextListener {
+@Component
+@RequiredArgsConstructor
+public class DataListener implements ApplicationListener<ApplicationEvent> {
 
+    private final Connection connection;
     private static final String PATH_SQL_CREATE = "/db/create_sql_V1.sql";
     private static final String PATH_SQL_DROP = "/db/drop_sql_V1.sql";
 
     @Override
-    public void contextInitialized(ServletContextEvent sce) {
-
+    public void onApplicationEvent(ApplicationEvent event) {
         try {
-            Connection connection = ConnectionManager.getJDBCConnection();
-
             Statement statement = connection.createStatement();
-            statement.execute(readScript(PATH_SQL_CREATE));
-
+            if (event instanceof ContextRefreshedEvent) {
+                statement.execute(readScript(PATH_SQL_CREATE));
+            } else if (event instanceof ContextStoppedEvent) {
+                statement.execute(readScript(PATH_SQL_DROP));
+            }
         } catch (SQLException e) {
             throw new InitializationSQLException("Error when executing SQL script");
         }
     }
 
-    @Override
-    public void contextDestroyed(ServletContextEvent sce) {
-
-        try {
-            Connection connection = ConnectionManager.getJDBCConnection();
-
-            Statement statement = connection.createStatement();
-            statement.execute(readScript(PATH_SQL_DROP));
-
-        } catch (SQLException e) {
-
-            throw new InitializationSQLException("Error when executing SQL script DROP");
-        }
-    }
-
     private static String readScript(String pathSQLScript) {
-
-        try (InputStream in = ContextListener.class.getResourceAsStream(pathSQLScript);
+        try (InputStream in = DataListener.class.getResourceAsStream(pathSQLScript);
              BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
-
             return reader.lines().collect(Collectors.joining("\n"));
-
         } catch (IOException ex) {
-
             log.error("Error when reading SQL script", ex);
             throw new InitializationSQLException(ex.getMessage());
         }

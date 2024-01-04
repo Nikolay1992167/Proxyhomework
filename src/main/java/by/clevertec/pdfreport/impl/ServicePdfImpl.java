@@ -19,6 +19,7 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfWriter;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.net.URL;
@@ -34,6 +35,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Random;
 import java.util.stream.Stream;
 
+@Service
 public class ServicePdfImpl implements ServicePdf {
 
     @Override

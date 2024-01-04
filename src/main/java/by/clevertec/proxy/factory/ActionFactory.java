@@ -6,6 +6,7 @@ import by.clevertec.entity.Car;
 import by.clevertec.pdfreport.ServicePdf;
 import by.clevertec.pdfreport.impl.ServicePdfImpl;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,6 +15,7 @@ import java.util.UUID;
 
 
 @Slf4j
+@Component
 public class ActionFactory {
 
     private final Map<String, Action> actionMap = new HashMap<>();

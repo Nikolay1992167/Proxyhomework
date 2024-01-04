@@ -6,7 +6,9 @@ import by.clevertec.exception.CarSQLException;
 import by.clevertec.proxy.annotations.ReflectionCheck;
 import by.clevertec.util.ConnectionManager;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,14 +20,11 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
-@AllArgsConstructor
+@Repository
+@RequiredArgsConstructor
 public class CarDAOImpl implements CarDAO {
 
     private final Connection connection;
-
-    public CarDAOImpl() {
-        connection = ConnectionManager.getJDBCConnection();
-    }
 
     /**
      * Find in memory car by id

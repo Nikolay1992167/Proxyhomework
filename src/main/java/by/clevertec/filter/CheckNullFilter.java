@@ -2,6 +2,8 @@ package by.clevertec.filter;
 
 import by.clevertec.dto.CarDto;
 import com.google.gson.Gson;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -15,8 +17,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 
 @WebFilter("/cars/*")
+@Component
+@RequiredArgsConstructor
 public class CheckNullFilter extends HttpFilter {
-    private final Gson gson = new Gson();
+    private final Gson gson;
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
