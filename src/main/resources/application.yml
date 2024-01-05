@@ -1,0 +1,9 @@
+spring:
+  datasource:
+      driver: org.postgresql.Driver
+      url: jdbc:postgresql://localhost:5432/carstest
+      username: postgres
+      password: 87654321
+cache:
+  capacity: 3
+  algorithm: LFUCache
