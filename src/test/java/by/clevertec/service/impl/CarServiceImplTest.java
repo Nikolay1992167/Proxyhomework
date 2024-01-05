@@ -6,6 +6,7 @@ import by.clevertec.dto.InfoCarDto;
 import by.clevertec.entity.Car;
 import by.clevertec.exception.NotFoundException;
 import by.clevertec.mapper.CarMapper;
+import by.clevertec.proxy.MyInvocationHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -37,14 +38,23 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class CarServiceImplTest {
 
-    @InjectMocks
-    private CarServiceImpl carService;
     @Mock
     private CarMapper mapper;
+
     @Mock
     private CarDAO carDAOproxy;
+
+    @Mock
+    private MyInvocationHandler handler;
+
+    @InjectMocks
+    private CarServiceImpl carService;
+
     @Captor
     private ArgumentCaptor<Car> captor;
+
+    CarServiceImplTest() {
+    }
 
     @BeforeEach
     public void init() {

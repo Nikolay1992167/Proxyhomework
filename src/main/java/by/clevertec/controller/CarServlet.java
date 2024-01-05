@@ -72,10 +72,7 @@ public class CarServlet extends HttpServlet {
         carService.update(UUID.fromString(id), carDtoToUpdate);
 
         PrintWriter printWriter = resp.getWriter();
-        String carDtoToJson = gson.toJson(carDtoToUpdate);
-
-        printWriter.print(carDtoToJson);
-        printWriter.flush();
+        printJson(carDtoToUpdate, printWriter);
     }
 
     @Override

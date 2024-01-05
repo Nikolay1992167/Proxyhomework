@@ -1,7 +1,6 @@
 package by.clevertec.service.impl;
 
 import by.clevertec.dao.CarDAO;
-import by.clevertec.dao.impl.CarDAOImpl;
 import by.clevertec.dto.CarDto;
 import by.clevertec.dto.InfoCarDto;
 import by.clevertec.entity.Car;
@@ -13,7 +12,6 @@ import by.clevertec.util.PageChecker;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Proxy;
-import java.sql.Connection;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,10 +22,8 @@ public class CarServiceImpl implements CarService {
 
     private final CarMapper carMapper;
 
-    public CarServiceImpl(CarMapper carMapper, Connection connection) {
+    public CarServiceImpl(CarMapper carMapper, MyInvocationHandler handler) {
         this.carMapper = carMapper;
-        CarDAO carDAO = new CarDAOImpl(connection);
-        MyInvocationHandler handler = new MyInvocationHandler(carDAO);
         this.carDAOproxy = (CarDAO) Proxy.newProxyInstance(MyInvocationHandler.class.getClassLoader(), new Class<?>[]{CarDAO.class}, handler);
     }
 
