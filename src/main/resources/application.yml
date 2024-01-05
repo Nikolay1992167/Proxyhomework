@@ -6,4 +6,4 @@ spring:
       password: 87654321
 cache:
   capacity: 3
-  algorithm: LRUCache
+  algorithm: LFUCache
