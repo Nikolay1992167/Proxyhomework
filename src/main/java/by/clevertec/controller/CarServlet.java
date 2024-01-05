@@ -46,15 +46,7 @@ public class CarServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
-        BufferedReader reader = req.getReader();
-        StringBuilder result = new StringBuilder();
-        String line;
-
-        while ((line = reader.readLine()) != null) {
-            result.append(line);
-        }
-
-        CarDto carDtoToCreate = gson.fromJson(result.toString(), CarDto.class);
+        CarDto carDtoToCreate = getCarDtoFromRequest(req);
 
         carService.create(carDtoToCreate);
 
@@ -68,7 +60,7 @@ public class CarServlet extends HttpServlet {
 
         String id = req.getParameter("id");
 
-        CarDto carDtoToUpdate = (CarDto) req.getAttribute("carDto");
+        CarDto carDtoToUpdate = getCarDtoFromRequest(req);
         carService.update(UUID.fromString(id), carDtoToUpdate);
 
         PrintWriter printWriter = resp.getWriter();
@@ -82,6 +74,19 @@ public class CarServlet extends HttpServlet {
 
         carService.delete(UUID.fromString(id));
         resp.setStatus(204);
+    }
+
+    private CarDto getCarDtoFromRequest(HttpServletRequest req) throws IOException {
+
+        BufferedReader reader = req.getReader();
+        StringBuilder result = new StringBuilder();
+        String line;
+
+        while ((line = reader.readLine()) != null) {
+            result.append(line);
+        }
+
+        return gson.fromJson(result.toString(), CarDto.class);
     }
 
     private void findById(String id, PrintWriter printWriter) {
