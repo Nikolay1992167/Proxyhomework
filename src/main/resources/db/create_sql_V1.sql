@@ -1,6 +1,6 @@
 CREATE SCHEMA IF NOT EXISTS public_car;
 
-CREATE TABLE public_car.cars
+CREATE TABLE IF NOT EXISTS public_car.cars
 (
 id UUID DEFAULT gen_random_uuid()  PRIMARY KEY,
 name VARCHAR(10) NOT NULL,

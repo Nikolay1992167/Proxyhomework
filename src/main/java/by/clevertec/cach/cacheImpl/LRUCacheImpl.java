@@ -1,11 +1,13 @@
 package by.clevertec.cach.cacheImpl;
 
 import by.clevertec.cach.Cache;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+@Data
 @EqualsAndHashCode(callSuper = false)
 public class LRUCacheImpl<K, V> extends LinkedHashMap<K, V> implements Cache<K, V> {
 

@@ -1,15 +1,13 @@
 package by.clevertec.proxy;
 
 import by.clevertec.cach.Cache;
-import by.clevertec.cach.factory.CacheFactory;
-import by.clevertec.cach.factory.CacheFactoryImpl;
 import by.clevertec.dao.CarDAO;
 import by.clevertec.entity.Car;
 import by.clevertec.proxy.annotations.ReflectionCheck;
 import by.clevertec.proxy.factory.Action;
 import by.clevertec.proxy.factory.ActionFactory;
-import org.springframework.core.env.Environment;
-import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
@@ -17,18 +15,19 @@ import java.lang.reflect.Method;
 import java.util.Optional;
 import java.util.UUID;
 
-@Service
+@Component
 public class MyInvocationHandler implements InvocationHandler {
 
     private final CarDAO target;
-    private final Class<?> targetClass;
-    private final Cache<UUID, Car> cache;
 
-    public MyInvocationHandler(CarDAO target, Environment env) {
+    private final Class<?> targetClass;
+
+    @Autowired
+    private Cache<UUID, Car> cache;
+
+    public MyInvocationHandler(CarDAO target) {
         this.target = target;
         this.targetClass = target.getClass();
-        CacheFactory<UUID, Car> cacheFactory = new CacheFactoryImpl<>(env);
-        this.cache = cacheFactory.createCacheType();
     }
 
     @Override

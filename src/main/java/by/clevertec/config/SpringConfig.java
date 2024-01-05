@@ -9,38 +9,65 @@ import com.google.gson.GsonBuilder;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
+import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.env.Environment;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.core.io.ClassPathResource;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.Objects;
+import java.util.Properties;
 
 @Configuration
 @ComponentScan("by.clevertec")
 @RequiredArgsConstructor
-@PropertySource("classpath:application.properties")
+@PropertySource("classpath:application.yml")
 public class SpringConfig {
 
-    private final Environment env;
+    @Value("${spring.datasource.driver}")
+    private String driver;
 
-    private final CacheFactory cacheFactory;
+    @Value("${spring.datasource.url}")
+    private String url;
+
+    @Value("${spring.datasource.username}")
+    private String username;
+
+    @Value("${spring.datasource.password}")
+    private String password;
+
+    private final CacheFactory<?, ?> cacheFactory;
 
     @Bean
-    public Cache<?,?> cache(){
+    public Cache<?, ?> cache() {
+
         return cacheFactory.createCacheType();
+    }
+
+    @Bean
+    public static BeanFactoryPostProcessor beanFactoryPostProcessor() {
+        PropertySourcesPlaceholderConfigurer configure = new PropertySourcesPlaceholderConfigurer();
+        YamlPropertiesFactoryBean yaml = new YamlPropertiesFactoryBean();
+        yaml.setResources(new ClassPathResource("application.yml"));
+        Properties yamlObject = Objects.requireNonNull(yaml.getObject(), "Yaml not found.");
+        configure.setProperties(yamlObject);
+        return configure;
     }
 
     @Bean
     public HikariDataSource hikariDataSource() {
         HikariConfig hikariConfig = new HikariConfig();
-        hikariConfig.setDriverClassName(env.getRequiredProperty("spring.datasource.driver"));
-        hikariConfig.setJdbcUrl(env.getRequiredProperty("spring.datasource.url"));
-        hikariConfig.setUsername(env.getRequiredProperty("spring.datasource.username"));
-        hikariConfig.setPassword(env.getRequiredProperty("spring.datasource.password"));
+        hikariConfig.setDriverClassName(driver);
+        hikariConfig.setJdbcUrl(url);
+        hikariConfig.setUsername(username);
+        hikariConfig.setPassword(password);
         return new HikariDataSource(hikariConfig);
     }
 
@@ -54,7 +81,7 @@ public class SpringConfig {
     }
 
     @Bean
-    public Gson getGson(){
+    public Gson getGson() {
         return new GsonBuilder()
                 .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
                 .create();

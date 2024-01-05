@@ -4,8 +4,6 @@ import by.clevertec.dao.CarDAO;
 import by.clevertec.entity.Car;
 import by.clevertec.exception.CarSQLException;
 import by.clevertec.proxy.annotations.ReflectionCheck;
-import by.clevertec.util.ConnectionManager;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;

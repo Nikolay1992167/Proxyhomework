@@ -6,6 +6,7 @@ import by.clevertec.entity.Car;
 import by.clevertec.pdfreport.ServicePdf;
 import by.clevertec.pdfreport.impl.ServicePdfImpl;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -13,14 +14,17 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-
 @Slf4j
 @Component
 public class ActionFactory {
 
     private final Map<String, Action> actionMap = new HashMap<>();
+
     private final CarDAO target;
+
+    @Autowired
     private final Cache<UUID, Car> cache;
+
     private final ServicePdf servicePdf = new ServicePdfImpl();
 
     public ActionFactory(CarDAO target, Cache<UUID, Car> cache) {

@@ -10,7 +10,6 @@ import by.clevertec.mapper.CarMapper;
 import by.clevertec.proxy.MyInvocationHandler;
 import by.clevertec.service.CarService;
 import by.clevertec.util.PageChecker;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Proxy;
@@ -22,12 +21,13 @@ import java.util.UUID;
 public class CarServiceImpl implements CarService {
 
     private CarDAO carDAOproxy;
+
     private final CarMapper carMapper;
 
-    public CarServiceImpl(CarMapper carMapper, Environment env, Connection connection) {
+    public CarServiceImpl(CarMapper carMapper, Connection connection) {
         this.carMapper = carMapper;
         CarDAO carDAO = new CarDAOImpl(connection);
-        MyInvocationHandler handler = new MyInvocationHandler(carDAO, env);
+        MyInvocationHandler handler = new MyInvocationHandler(carDAO);
         this.carDAOproxy = (CarDAO) Proxy.newProxyInstance(MyInvocationHandler.class.getClassLoader(), new Class<?>[]{CarDAO.class}, handler);
     }
 
